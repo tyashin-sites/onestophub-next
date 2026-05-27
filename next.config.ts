@@ -67,12 +67,9 @@ const nextConfig = {
       },
       { source: '/sitemap.xml', destination: `${STOREFRONT_ORIGIN}/sitemap.xml` },
       { source: '/robots.txt', destination: `${STOREFRONT_ORIGIN}/robots.txt` },
-      // Tyashin-owned legal pages — admin-edited HTML lives in projects.legalPages
-      // and is served via dispatch on storefront origins. Proxy them so the
-      // footer-bar links resolve on direct workers.dev access too.
-      { source: '/terms-and-conditions', destination: `${STOREFRONT_ORIGIN}/terms-and-conditions` },
-      { source: '/privacy-policy', destination: `${STOREFRONT_ORIGIN}/privacy-policy` },
-      { source: '/return-policy', destination: `${STOREFRONT_ORIGIN}/return-policy` },
+      // Legal pages (/terms-and-conditions, /privacy-policy, /return-policy)
+      // require the X-API-Key header so they're served via a route handler
+      // at src/app/[slug]/route.ts rather than a plain rewrite.
     ];
   },
 };

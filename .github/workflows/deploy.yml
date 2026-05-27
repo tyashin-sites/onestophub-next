@@ -38,29 +38,51 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
 
-      - name: Set Worker secrets
+      - name: Set Worker secrets (from Tyashin platform OR GH fallback)
         if: steps.deploy.outcome == 'success'
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          TYASHIN_API_URL: ${{ secrets.TYASHIN_API_URL }}
+          TYASHIN_BUILD_SECRET: ${{ secrets.TYASHIN_BUILD_SECRET }}
+          # GH-side fallback secrets — used when this repo isn't yet wired to a
+          # Tyashin project (or as an override). The Tyashin secrets endpoint
+          # wins when both are present.
+          FALLBACK_TYASHIN_API_KEY: ${{ secrets.TYASHIN_API_KEY }}
         run: |
-          SECRETS_JSON=$(curl -sS "${{ secrets.TYASHIN_API_URL }}/api/v1/builds/secrets/${{ github.repository }}" \
-            -H "X-Build-Secret: ${{ secrets.TYASHIN_BUILD_SECRET }}")
+          set -e
+          declare -A SECRETS
 
-          echo "$SECRETS_JSON" | node -e "
-            const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
-            if (data.success && data.data) {
-              for (const [key, val] of Object.entries(data.data)) {
-                const { execSync } = require('child_process');
-                execSync('echo ' + JSON.stringify(val) + ' | npx wrangler secret put ' + key, { stdio: 'pipe' });
-                console.log('Set secret: ' + key);
-              }
-            }
-          "
+          if [ -n "$TYASHIN_API_URL" ] && [ -n "$TYASHIN_BUILD_SECRET" ]; then
+            echo "→ fetching secrets from Tyashin: $TYASHIN_API_URL"
+            RESP=$(curl -sS --fail-with-body "$TYASHIN_API_URL/api/v1/builds/secrets/${{ github.repository }}" \
+              -H "X-Build-Secret: $TYASHIN_BUILD_SECRET" || echo '{"success":false}')
+            while IFS=$'\t' read -r k v; do
+              [ -n "$k" ] && SECRETS["$k"]="$v"
+            done < <(echo "$RESP" | node -e "
+              const d=JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+              if (d.success && d.data) for (const [k,v] of Object.entries(d.data)) process.stdout.write(k+'\t'+v+'\n');
+            ")
+          fi
+
+          if [ -z "${SECRETS[TYASHIN_API_KEY]:-}" ] && [ -n "$FALLBACK_TYASHIN_API_KEY" ]; then
+            echo "→ using GH-side fallback TYASHIN_API_KEY"
+            SECRETS[TYASHIN_API_KEY]="$FALLBACK_TYASHIN_API_KEY"
+          fi
+
+          if [ "${#SECRETS[@]}" -eq 0 ]; then
+            echo "::warning::No secrets configured — Worker will deploy without TYASHIN_API_KEY (SSR catalog reads will 401)"
+          fi
+
+          for KEY in "${!SECRETS[@]}"; do
+            echo "  set: $KEY"
+            echo "${SECRETS[$KEY]}" | npx wrangler secret put "$KEY"
+          done
 
       - name: Notify Tyashin (success)
         if: success()
         run: |
+          [ -z "${{ secrets.TYASHIN_API_URL }}" ] && { echo "TYASHIN_API_URL not set, skipping notify"; exit 0; }
           curl -sS -X POST "${{ secrets.TYASHIN_API_URL }}/api/v1/builds/webhook" \
             -H "Content-Type: application/json" \
             -H "X-Build-Secret: ${{ secrets.TYASHIN_BUILD_SECRET }}" \
@@ -74,6 +96,7 @@ jobs:
       - name: Notify Tyashin (failure)
         if: failure()
         run: |
+          [ -z "${{ secrets.TYASHIN_API_URL }}" ] && { echo "TYASHIN_API_URL not set, skipping notify"; exit 0; }
           curl -sS -X POST "${{ secrets.TYASHIN_API_URL }}/api/v1/builds/webhook" \
             -H "Content-Type: application/json" \
             -H "X-Build-Secret: ${{ secrets.TYASHIN_BUILD_SECRET }}" \

@@ -1,7 +1,8 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { Toaster, toast } from 'sonner';
+import { Toaster, toast as sonnerToast } from 'sonner';
+import type { ReactNode as ToastNode } from 'react';
 import { api, ApiError } from '@/lib/api';
 import type { Cart, StoreInfo, ApiCategory } from '@/lib/types';
 
@@ -149,18 +150,46 @@ export function Providers({
           }}
         >
           {children}
-          <Toaster position="top-right" richColors closeButton />
+          {/*
+           * Match the Lovable storefront's shadcn-toast look: card-coloured
+           * background, brand foreground text, subtle border, action button in
+           * the brand primary. No `richColors` (which paints bright green/red
+           * banners that clash with the burgundy/cream palette).
+           */}
+          <Toaster
+            position="top-right"
+            closeButton
+            toastOptions={{
+              classNames: {
+                toast:
+                  'group bg-card text-card-foreground border border-border shadow-lg rounded-lg',
+                title: 'font-display text-sm font-semibold text-foreground',
+                description: 'text-xs text-muted-foreground',
+                actionButton:
+                  '!bg-primary !text-primary-foreground !text-xs !font-semibold !uppercase !tracking-wider !rounded-md',
+                closeButton: '!bg-transparent !text-muted-foreground',
+              },
+            }}
+          />
         </CartContext.Provider>
       </CategoryContext.Provider>
     </StoreContext.Provider>
   );
 }
 
+/**
+ * Match the Lovable storefront's shadcn toast call signature:
+ *   toast.success(title, { description, action: { label, onClick } })
+ * This is just sonner's API — re-exported here for ergonomics.
+ */
+export const toast = sonnerToast;
+
 /** Common error → toast helper used by client pages. */
 export function toastError(err: unknown, fallback = 'Something went wrong') {
   const msg =
     err instanceof ApiError ? err.message : err instanceof Error ? err.message : fallback;
-  toast.error(msg);
+  sonnerToast.error(msg);
 }
 
-export { toast };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _ToastNodeRef = ToastNode;

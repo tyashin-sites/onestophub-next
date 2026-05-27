@@ -11,6 +11,17 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  // Incremental Static Regeneration / fetch cache backing store. Without this
+  // every SSR'd page is recomputed on every request — adds ~2.5s TTFB from
+  // Canadian POPs (Mongo cold-connect to asia-south1) and ~1-2s from Indian
+  // POPs. With it, the first hit per URL is slow, all subsequent hits within
+  // the revalidation window are ~50ms from any POP.
+  "kv_namespaces": [
+    {
+      "binding": "NEXT_INC_CACHE_KV",
+      "id": "a963a73017bf4097928079c9dbf3e9eb"
+    }
+  ],
   "vars": {
     // Public storefront API base. The new site is a thin renderer over Tyashin's
     // public e-commerce API — no DB / KV / R2 bindings on this Worker.

@@ -37,13 +37,36 @@ const nextConfig = {
     ];
   },
   async rewrites() {
-    // Brand-kit assets (logo, etc.) live in the project's R2 bucket and are
-    // served at the storefront host by the platform fallback. The new Worker
-    // doesn't serve them, so proxy through to the currently-active production
-    // host. After cutover this rewrite stops doing anything (same origin) but
-    // it's harmless to keep.
+    // Tyashin serves a handful of platform-owned paths at the storefront's
+    // origin via its dispatch interceptor (brand-kit.css, tyashin-runtime.js,
+    // /brand/* assets, sitemap.xml, robots.txt). When the Worker is reached
+    // directly at *.workers.dev the dispatch layer isn't in front of us so
+    // those paths would 404.
+    //
+    // We can't easily ask website-api.tyashin.com to serve them — its CORP
+    // header blocks cross-origin asset loads. Instead we proxy through to the
+    // project's Tyashin subdomain (`{slug}.sites.tyashin.com`), which IS
+    // dispatched correctly and returns the platform-owned response. The
+    // browser sees same-origin → no CORS, no 404.
+    //
+    // In production via Tyashin dispatch these requests are intercepted BEFORE
+    // they reach the Worker, so these rewrites are a no-op in that path.
+    // They only matter for direct workers.dev / QA access.
+    const STOREFRONT_ORIGIN =
+      process.env.TYASHIN_STOREFRONT_ORIGIN || 'https://onestophub.sites.tyashin.com';
     return [
-      { source: '/brand/:path*', destination: 'https://www.1stophub.shop/brand/:path*' },
+      { source: '/brand-kit.css', destination: `${STOREFRONT_ORIGIN}/brand-kit.css` },
+      { source: '/tyashin-runtime.js', destination: `${STOREFRONT_ORIGIN}/tyashin-runtime.js` },
+      // /brand/* assets (logo, favicon, etc.) live in R2 under the project's
+      // r2Prefix. They aren't served at /brand/* on the storefront origin —
+      // they're served via the public-media pass-through, which sets
+      // `Access-Control-Allow-Origin: *` so a same-origin rewrite works.
+      {
+        source: '/brand/:path*',
+        destination: `https://website-api.tyashin.com/api/v1/public/media/projects/tyashin-aditya-s-team-g8ijaf-onestophub/brand/:path*`,
+      },
+      { source: '/sitemap.xml', destination: `${STOREFRONT_ORIGIN}/sitemap.xml` },
+      { source: '/robots.txt', destination: `${STOREFRONT_ORIGIN}/robots.txt` },
     ];
   },
 };

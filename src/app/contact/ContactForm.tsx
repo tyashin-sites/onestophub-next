@@ -45,9 +45,9 @@ export default function ContactForm() {
     }
   };
 
-  const labelClass = 'text-xs uppercase tracking-wider text-brand-text-muted';
+  const labelClass = 'text-xs uppercase tracking-wider text-muted-foreground';
   const inputClass =
-    'mt-1 w-full rounded-brand-md border border-brand-border bg-brand-bg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30';
+    'mt-1 w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30';
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -84,7 +84,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-full bg-brand-primary py-3 text-sm font-semibold uppercase tracking-wider text-brand-primary-contrast transition-colors hover:bg-brand-primary/90 disabled:opacity-60"
+        className="w-full rounded-full bg-primary py-3 text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
       >
         {submitting ? 'Sending…' : 'Send Message'}
       </button>

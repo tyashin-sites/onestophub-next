@@ -51,22 +51,22 @@ export default async function FaqPage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="bg-brand-surface py-10 md:py-16">
+        <section className="bg-cream py-10 md:py-16">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl font-bold text-brand-text md:text-4xl">Frequently Asked Questions</h1>
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">Frequently Asked Questions</h1>
           </div>
         </section>
 
         <section className="py-12 md:py-20">
           <div className="container mx-auto max-w-3xl px-4">
             {faqs.length === 0 ? (
-              <p className="text-center text-brand-text-muted">
+              <p className="text-center text-muted-foreground">
                 We&apos;re putting together a comprehensive FAQ. In the meantime, contact us at{' '}
-                <a className="text-brand-primary hover:underline" href="mailto:onestophubshop@gmail.com">
+                <a className="text-primary hover:underline" href="mailto:onestophubshop@gmail.com">
                   onestophubshop@gmail.com
                 </a>{' '}
                 or WhatsApp us at{' '}
-                <a className="text-brand-primary hover:underline" href="tel:+919625912577">
+                <a className="text-primary hover:underline" href="tel:+919625912577">
                   +91 96259 12577
                 </a>
                 .
@@ -76,13 +76,13 @@ export default async function FaqPage() {
                 {faqs.map((f) => (
                   <details
                     key={f._id}
-                    className="group rounded-brand-lg border border-brand-border bg-brand-bg p-5 [&_summary::-webkit-details-marker]:hidden"
+                    className="group rounded-lg border border-border bg-background p-5 [&_summary::-webkit-details-marker]:hidden"
                   >
-                    <summary className="cursor-pointer text-base font-semibold text-brand-text">
+                    <summary className="cursor-pointer text-base font-semibold text-foreground">
                       {f.question}
                     </summary>
                     <div
-                      className="mt-3 text-sm leading-relaxed text-brand-text-muted"
+                      className="mt-3 text-sm leading-relaxed text-muted-foreground"
                       dangerouslySetInnerHTML={{ __html: f.answer }}
                     />
                   </details>

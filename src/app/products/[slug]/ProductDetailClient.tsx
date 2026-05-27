@@ -76,7 +76,7 @@ export default function ProductDetailClient({ product }: Props) {
     <>
       {/* Image gallery */}
       <div>
-        <div className="mb-4 aspect-square overflow-hidden rounded-brand-lg bg-brand-surface">
+        <div className="mb-4 aspect-square overflow-hidden rounded-lg bg-cream">
           {product.images[selectedImage] ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -85,7 +85,7 @@ export default function ProductDetailClient({ product }: Props) {
               className="h-full w-full object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-brand-text-muted">
+            <div className="flex h-full w-full items-center justify-center text-muted-foreground">
               No image
             </div>
           )}
@@ -96,8 +96,8 @@ export default function ProductDetailClient({ product }: Props) {
               <button
                 key={i}
                 onClick={() => setSelectedImage(i)}
-                className={`h-16 w-16 shrink-0 overflow-hidden rounded-brand-md border-2 transition-colors ${
-                  i === selectedImage ? 'border-brand-primary' : 'border-brand-border'
+                className={`h-16 w-16 shrink-0 overflow-hidden rounded-md border-2 transition-colors ${
+                  i === selectedImage ? 'border-primary' : 'border-border'
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -110,14 +110,14 @@ export default function ProductDetailClient({ product }: Props) {
 
       {/* Details */}
       <div>
-        <h1 className="text-2xl font-bold text-brand-text md:text-3xl">{product.name}</h1>
+        <h1 className="text-2xl font-bold text-foreground md:text-3xl">{product.name}</h1>
 
         <div className="mt-4 flex items-center gap-3">
-          <span className="text-2xl font-bold text-brand-primary">
+          <span className="text-2xl font-bold text-primary">
             {formatPrice(displayPrice, currency)}
           </span>
           {product.compareAtPrice && product.compareAtPrice > displayPrice && (
-            <span className="text-lg text-brand-text-muted line-through">
+            <span className="text-lg text-muted-foreground line-through">
               {formatPrice(product.compareAtPrice, currency)}
             </span>
           )}
@@ -125,32 +125,32 @@ export default function ProductDetailClient({ product }: Props) {
 
         {taxName && taxRate > 0 &&
           (taxInclusive ? (
-            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-brand-text-muted">
-              <span className="font-medium text-brand-success">Inclusive of all taxes</span>
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+              <span className="font-medium text-sage">Inclusive of all taxes</span>
             </div>
           ) : (
-            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-brand-text-muted">
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
               <span>
                 + {taxName} {taxRate}%
               </span>
-              <span className="text-brand-border">·</span>
+              <span className="text-border">·</span>
               <span>Tax: {formatPrice(taxAmount, currency)}</span>
-              <span className="text-brand-border">·</span>
-              <span className="font-semibold text-brand-text">
+              <span className="text-border">·</span>
+              <span className="font-semibold text-foreground">
                 Total: {formatPrice(totalWithTax, currency)}
               </span>
             </div>
           ))}
 
         {product.shortDescription && (
-          <p className="mt-4 text-brand-text-muted">{product.shortDescription}</p>
+          <p className="mt-4 text-muted-foreground">{product.shortDescription}</p>
         )}
 
         {/* Variant pickers */}
         {product.hasVariants &&
           Object.entries(optionGroups).map(([optionName, values]) => (
             <div key={optionName} className="mt-6">
-              <label className="text-xs uppercase tracking-wider text-brand-text-muted">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground">
                 {optionName}
               </label>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -165,8 +165,8 @@ export default function ProductDetailClient({ product }: Props) {
                       onClick={() => matching && setSelectedVariantId(matching.id)}
                       className={`rounded-full border px-4 py-2 text-sm transition-colors ${
                         isSelected
-                          ? 'border-brand-primary bg-brand-primary text-brand-primary-contrast'
-                          : 'border-brand-border bg-brand-bg text-brand-text hover:border-brand-primary'
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-border bg-background text-foreground hover:border-primary'
                       }`}
                     >
                       {val}
@@ -179,18 +179,18 @@ export default function ProductDetailClient({ product }: Props) {
 
         {/* Quantity */}
         <div className="mt-6">
-          <label className="text-xs uppercase tracking-wider text-brand-text-muted">Quantity</label>
+          <label className="text-xs uppercase tracking-wider text-muted-foreground">Quantity</label>
           <div className="mt-2 flex items-center gap-3">
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-border text-lg transition-colors hover:bg-brand-surface"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-lg transition-colors hover:bg-cream"
             >
               −
             </button>
             <span className="w-8 text-center text-lg">{quantity}</span>
             <button
               onClick={() => setQuantity((q) => q + 1)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-border text-lg transition-colors hover:bg-brand-surface"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-lg transition-colors hover:bg-cream"
             >
               +
             </button>
@@ -200,16 +200,16 @@ export default function ProductDetailClient({ product }: Props) {
         <button
           onClick={handleAdd}
           disabled={adding}
-          className="mt-8 w-full rounded-full bg-brand-primary py-3 text-sm font-semibold uppercase tracking-wider text-brand-primary-contrast transition-colors hover:bg-brand-primary/90 disabled:opacity-60"
+          className="mt-8 w-full rounded-full bg-primary py-3 text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
         >
           {adding ? 'Adding…' : 'Add to Cart'}
         </button>
 
         {/* Description */}
         {product.description && (
-          <div className="mt-8 border-t border-brand-border pt-8">
-            <h3 className="mb-3 text-lg font-semibold text-brand-text">Description</h3>
-            <div className="whitespace-pre-wrap text-sm leading-relaxed text-brand-text-muted">
+          <div className="mt-8 border-t border-border pt-8">
+            <h3 className="mb-3 text-lg font-semibold text-foreground">Description</h3>
+            <div className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
               {product.description}
             </div>
           </div>
@@ -220,7 +220,7 @@ export default function ProductDetailClient({ product }: Props) {
             {product.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-brand-surface px-3 py-1 text-xs text-brand-text-muted"
+                className="rounded-full bg-cream px-3 py-1 text-xs text-muted-foreground"
               >
                 {tag}
               </span>

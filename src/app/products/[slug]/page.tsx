@@ -86,7 +86,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="container mx-auto px-4 py-8">
           <Link
             href="/products"
-            className="mb-6 inline-flex items-center gap-1 text-sm text-brand-text-muted transition-colors hover:text-brand-primary"
+            className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-primary"
           >
             <ChevronLeft className="h-4 w-4" /> Back to Shop
           </Link>

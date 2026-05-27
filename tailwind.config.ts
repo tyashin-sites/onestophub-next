@@ -1,44 +1,88 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Brand colours are exposed by the Tyashin platform at /brand-kit.css as CSS
- * custom properties (--brand-primary, --brand-accent, …). We map those into
- * Tailwind tokens here so utilities like `bg-brand-primary text-brand-text`
- * work without hardcoding hex values. Updating the brand kit in the admin
- * panel takes effect immediately — no rebuild needed.
+ * Tailwind config — ported verbatim from the Lovable storefront so all
+ * existing className strings (`bg-cream`, `text-foreground`, `font-display`,
+ * `bg-sage`, etc.) resolve identically. Colors are HSL CSS vars defined in
+ * globals.css so the brand kit / dark mode etc. can override at runtime.
  */
 const config: Config = {
+  darkMode: ['class'],
   content: ['./src/**/*.{ts,tsx}'],
+  prefix: '',
   theme: {
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
+      fontFamily: {
+        display: ['Playfair Display', 'serif'],
+        body: ['Nunito Sans', 'sans-serif'],
+      },
       colors: {
-        brand: {
-          primary: 'var(--brand-primary, #dabeb2)',
-          'primary-contrast': 'var(--brand-primary-contrast, #0a0a0a)',
-          accent: 'var(--brand-accent, #e5d9be)',
-          bg: 'var(--brand-background, #ffffff)',
-          surface: 'var(--brand-surface, #f8f9fb)',
-          text: 'var(--brand-text, #0a0a0a)',
-          'text-muted': 'var(--brand-text-muted, #525867)',
-          border: 'var(--brand-border, #e5e7eb)',
-          success: 'var(--brand-success, #16a34a)',
-          warning: 'var(--brand-warning, #d97706)',
-          danger: 'var(--brand-danger, #dc2626)',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
-        footer: {
-          bg: 'var(--footer-bg, #6b2e38)',
-          text: 'var(--footer-text, #fcfaf8)',
-          link: 'var(--footer-link, #fcfaf8)',
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        gold: {
+          DEFAULT: 'hsl(var(--gold))',
+          light: 'hsl(var(--gold-light))',
+        },
+        blush: 'hsl(var(--blush))',
+        sage: 'hsl(var(--sage))',
+        cream: 'hsl(var(--cream))',
       },
       borderRadius: {
-        'brand-sm': 'var(--brand-radius-sm, 0.375rem)',
-        'brand-md': 'var(--brand-radius-md, 0.5rem)',
-        'brand-lg': 'var(--brand-radius-lg, 0.75rem)',
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
-      fontFamily: {
-        heading: 'var(--brand-heading-font, Inter), Inter, system-ui, sans-serif',
-        body: 'var(--brand-body-font, Inter), Inter, system-ui, sans-serif',
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
+        'fade-in': 'fade-in 0.5s ease-out forwards',
       },
     },
   },

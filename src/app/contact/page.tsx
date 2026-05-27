@@ -22,10 +22,10 @@ export default function ContactPage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="bg-brand-surface py-10 md:py-16">
+        <section className="bg-cream py-10 md:py-16">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl font-bold text-brand-text md:text-4xl">Contact Us</h1>
-            <p className="mt-2 text-brand-text-muted">We&apos;d love to hear from you</p>
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">Contact Us</h1>
+            <p className="mt-2 text-muted-foreground">We&apos;d love to hear from you</p>
           </div>
         </section>
 
@@ -33,15 +33,15 @@ export default function ContactPage() {
           <div className="container mx-auto px-4">
             <div className="mx-auto grid max-w-5xl gap-12 md:grid-cols-2">
               <div>
-                <h2 className="mb-6 text-2xl font-semibold text-brand-text">Get In Touch</h2>
+                <h2 className="mb-6 text-2xl font-semibold text-foreground">Get In Touch</h2>
                 <div className="space-y-5">
                   {CONTACT_INFO.map(({ Icon, label, value, href }) => (
                     <div key={label} className="flex items-start gap-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-accent/40">
-                        <Icon className="h-4 w-4 text-brand-primary" />
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blush/40">
+                        <Icon className="h-4 w-4 text-primary" />
                       </div>
                       <div>
-                        <p className="text-xs uppercase tracking-wider text-brand-text-muted">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground">
                           {label}
                         </p>
                         {href ? (
@@ -49,21 +49,21 @@ export default function ContactPage() {
                             href={href}
                             target={href.startsWith('http') ? '_blank' : undefined}
                             rel="noopener noreferrer"
-                            className="text-sm text-brand-text transition-colors hover:text-brand-primary"
+                            className="text-sm text-foreground transition-colors hover:text-primary"
                           >
                             {value}
                           </a>
                         ) : (
-                          <p className="text-sm text-brand-text">{value}</p>
+                          <p className="text-sm text-foreground">{value}</p>
                         )}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-8 rounded-brand-lg border border-brand-accent/30 bg-brand-accent/20 p-6">
-                  <p className="mb-2 text-lg font-semibold text-brand-text">Custom Orders</p>
-                  <p className="text-sm text-brand-text-muted">
+                <div className="mt-8 rounded-lg border border-accent/30 bg-blush/20 p-6">
+                  <p className="mb-2 text-lg font-semibold text-foreground">Custom Orders</p>
+                  <p className="text-sm text-muted-foreground">
                     Looking for something special? WhatsApp us for bulk orders, custom hampers
                     &amp; personalised gifts!
                   </p>
@@ -71,7 +71,7 @@ export default function ContactPage() {
                     href="https://wa.me/919625912577"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 inline-block text-sm font-semibold text-brand-primary hover:underline"
+                    className="mt-4 inline-block text-sm font-semibold text-primary hover:underline"
                   >
                     Chat on WhatsApp →
                   </a>
@@ -79,7 +79,7 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <h2 className="mb-6 text-2xl font-semibold text-brand-text">Send a Message</h2>
+                <h2 className="mb-6 text-2xl font-semibold text-foreground">Send a Message</h2>
                 <ContactForm />
               </div>
             </div>

@@ -34,30 +34,42 @@ export default async function HomePage() {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        {/* Hero */}
-        <section className="relative overflow-hidden bg-brand-surface">
-          <div className="container mx-auto px-4 py-24 md:py-36 lg:py-44">
-            <div className="max-w-xl">
-              <p className="mb-4 text-sm uppercase tracking-[0.3em] text-brand-text-muted">
+        {/* Hero — banner image background with dark gradient + cream copy */}
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/hero-banner.jpg"
+              alt="One Stop Hub collection"
+              className="h-full w-full object-cover"
+              width={1920}
+              height={800}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
+          </div>
+
+          <div className="relative container mx-auto px-4 py-24 md:py-36 lg:py-44">
+            <div className="max-w-xl animate-fade-in-up">
+              <p className="mb-4 font-body text-sm uppercase tracking-[0.3em] text-cream">
                 Welcome to
               </p>
-              <h1 className="mb-6 text-4xl font-bold leading-tight text-brand-text md:text-5xl lg:text-6xl">
+              <h1 className="mb-6 font-display text-4xl font-bold leading-tight text-cream md:text-5xl lg:text-6xl">
                 One Stop Hub
               </h1>
-              <p className="mb-8 max-w-md text-base leading-relaxed text-brand-text-muted md:text-lg">
+              <p className="mb-8 max-w-md font-body text-base leading-relaxed text-cream/90 md:text-lg">
                 Your destination for thoughtful gifts, adorable accessories &amp; creative
                 essentials for every little one.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
                   href="/products"
-                  className="rounded-full bg-brand-accent px-8 py-3 text-sm font-semibold uppercase tracking-wider text-brand-primary-contrast transition-colors hover:bg-brand-accent/90"
+                  className="rounded-full bg-accent px-8 py-3 font-body text-sm font-semibold uppercase tracking-wider text-accent-foreground transition-colors hover:bg-accent/90"
                 >
                   Shop Now
                 </Link>
                 <Link
                   href="/about"
-                  className="rounded-full border border-brand-border bg-transparent px-8 py-3 text-sm font-semibold uppercase tracking-wider text-brand-text transition-colors hover:bg-brand-surface"
+                  className="rounded-full border border-cream/40 bg-transparent px-8 py-3 font-body text-sm font-semibold uppercase tracking-wider text-cream transition-colors hover:bg-cream/10"
                 >
                   Our Story
                 </Link>
@@ -67,16 +79,16 @@ export default async function HomePage() {
         </section>
 
         {/* Features strip */}
-        <section className="border-b border-brand-border bg-brand-surface py-12">
+        <section className="border-b border-border bg-cream py-12">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
               {features.map(({ Icon, title, desc }) => (
                 <div key={title} className="flex flex-col items-center gap-2 text-center">
-                  <div className="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-brand-accent/40">
-                    <Icon className="h-5 w-5 text-brand-primary" />
+                  <div className="mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-blush/40">
+                    <Icon className="h-5 w-5 text-primary" />
                   </div>
-                  <h3 className="text-sm font-semibold text-brand-text md:text-base">{title}</h3>
-                  <p className="text-xs text-brand-text-muted">{desc}</p>
+                  <h3 className="text-sm font-semibold text-foreground md:text-base">{title}</h3>
+                  <p className="text-xs text-muted-foreground">{desc}</p>
                 </div>
               ))}
             </div>
@@ -85,7 +97,7 @@ export default async function HomePage() {
 
         {/* Categories */}
         {categories.length > 0 && (
-          <section className="bg-brand-bg py-16 md:py-24">
+          <section className="bg-background py-16 md:py-24">
             <div className="container mx-auto px-4">
               <SectionHeading eyebrow="Browse" title="Our Categories" />
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-3">
@@ -93,7 +105,7 @@ export default async function HomePage() {
                   <Link
                     key={cat._id}
                     href={getCategoryLandingHref(cat.slug)}
-                    className="group relative aspect-square overflow-hidden rounded-brand-lg"
+                    className="group relative aspect-square overflow-hidden rounded-lg"
                   >
                     {cat.imageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -104,8 +116,8 @@ export default async function HomePage() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-brand-surface">
-                        <span className="text-2xl font-semibold text-brand-text-muted">
+                      <div className="flex h-full w-full items-center justify-center bg-cream">
+                        <span className="text-2xl font-semibold text-muted-foreground">
                           {cat.name[0]}
                         </span>
                       </div>
@@ -127,7 +139,7 @@ export default async function HomePage() {
 
         {/* Featured */}
         {featured.length > 0 && (
-          <section className="bg-brand-surface py-16 md:py-24">
+          <section className="bg-cream py-16 md:py-24">
             <div className="container mx-auto px-4">
               <SectionHeading eyebrow="Handpicked" title="Featured Products" />
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6 lg:grid-cols-4">
@@ -138,7 +150,7 @@ export default async function HomePage() {
               <div className="mt-10 text-center">
                 <Link
                   href="/products"
-                  className="inline-block rounded-full border-2 border-brand-primary px-8 py-3 text-sm font-semibold uppercase tracking-wider text-brand-primary transition-colors hover:bg-brand-primary hover:text-brand-primary-contrast"
+                  className="inline-block rounded-full border-2 border-primary px-8 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                 >
                   View All Products
                 </Link>
@@ -148,12 +160,12 @@ export default async function HomePage() {
         )}
 
         {/* Custom WhatsApp CTA */}
-        <section className="bg-brand-accent/30 py-16 md:py-24">
+        <section className="bg-blush/30 py-16 md:py-24">
           <div className="container mx-auto max-w-2xl px-4 text-center">
-            <h2 className="mb-4 text-3xl font-semibold text-brand-text md:text-4xl">
+            <h2 className="mb-4 text-3xl font-semibold text-foreground md:text-4xl">
               Can&apos;t find what you&apos;re looking for?
             </h2>
-            <p className="mb-8 text-brand-text-muted">
+            <p className="mb-8 text-muted-foreground">
               We offer custom &amp; personalised gifting solutions. Tell us what you need and
               we&apos;ll make it happen!
             </p>
@@ -161,7 +173,7 @@ export default async function HomePage() {
               href="https://wa.me/919625912577"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block rounded-full bg-brand-primary px-8 py-3 text-sm font-semibold uppercase tracking-wider text-brand-primary-contrast transition-colors hover:bg-brand-primary/90"
+              className="inline-block rounded-full bg-primary px-8 py-3 text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90"
             >
               WhatsApp Us
             </a>

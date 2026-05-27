@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Providers } from '@/components/Providers';
+import LegalFooterBar from '@/components/LegalFooterBar';
 import { api } from '@/lib/api';
 import type { StoreInfo, ApiCategory } from '@/lib/types';
 
@@ -48,21 +49,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <head>
-        {/* Same-origin: served by Tyashin dispatch on storefront hosts.
-            Returns 404 on direct *.workers.dev — fallback vars in globals.css. */}
+        {/* Tyashin brand kit — loaded after globals.css so its variables can
+            override the Lovable defaults if/when an admin tweaks the brand
+            kit in the platform. Same-origin via the rewrite proxy. */}
         <link rel="stylesheet" href="/brand-kit.css" />
         <link rel="preconnect" href="https://website-api.tyashin.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        {/* Playfair Display + Nunito Sans are pulled by the @import in
+            globals.css — no extra <link> tags needed. */}
         <script src="/tyashin-runtime.js" defer />
       </head>
-      <body className="bg-brand-bg text-brand-text antialiased">
+      <body className="bg-background text-foreground antialiased">
         <Providers initialStore={initialStore} initialCategories={initialCategories}>
           {children}
+          <LegalFooterBar />
         </Providers>
       </body>
     </html>

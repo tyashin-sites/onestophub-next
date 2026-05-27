@@ -75,20 +75,20 @@ export default async function CategoryLandingPage({
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="bg-brand-surface py-10 md:py-16">
+        <section className="bg-cream py-10 md:py-16">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl font-bold text-brand-text md:text-4xl">
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">
               {category?.name || 'Category'}
             </h1>
             {category?.description && (
-              <p className="mt-2 text-brand-text-muted">{category.description}</p>
+              <p className="mt-2 text-muted-foreground">{category.description}</p>
             )}
             {category?.imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={category.imageUrl}
                 alt={category.name}
-                className="mx-auto mt-6 h-44 w-full max-w-4xl rounded-brand-lg object-cover md:h-56"
+                className="mx-auto mt-6 h-44 w-full max-w-4xl rounded-lg object-cover md:h-56"
                 loading="lazy"
               />
             )}

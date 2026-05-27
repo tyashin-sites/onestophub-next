@@ -15,13 +15,13 @@ export default function Footer() {
   const { categories } = useCategories();
 
   return (
-    <footer className="bg-brand-primary text-brand-primary-contrast">
+    <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="md:col-span-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/brand/logo-light.jpg"
+              src="/logo.jpg"
               alt="OneStopHub"
               className="mb-4 h-20 w-20 rounded-full"
             />

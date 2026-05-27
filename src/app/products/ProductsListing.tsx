@@ -135,7 +135,7 @@ export default function ProductsListing({
           placeholder="Search products..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="mx-auto block w-full max-w-md rounded-full border border-brand-border bg-brand-bg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30"
+          className="mx-auto block w-full max-w-md rounded-full border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </form>
 
@@ -146,8 +146,8 @@ export default function ProductsListing({
             onClick={() => setCategory('')}
             className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
               !activeCategorySlug
-                ? 'bg-brand-primary text-brand-primary-contrast'
-                : 'bg-brand-surface text-brand-text-muted hover:bg-brand-primary/10'
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-cream text-muted-foreground hover:bg-primary/10'
             }`}
           >
             All
@@ -158,8 +158,8 @@ export default function ProductsListing({
               onClick={() => setCategory(cat.slug)}
               className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors ${
                 activeCategorySlug === cat.slug
-                  ? 'bg-brand-primary text-brand-primary-contrast'
-                  : 'bg-brand-surface text-brand-text-muted hover:bg-brand-primary/10'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-cream text-muted-foreground hover:bg-primary/10'
               }`}
             >
               {cat.name}
@@ -173,7 +173,7 @@ export default function ProductsListing({
         <select
           value={`${initialSortBy}_${initialSortOrder}`}
           onChange={(e) => setSort(e.target.value)}
-          className="rounded-brand-md border border-brand-border bg-brand-bg px-3 py-2 text-sm"
+          className="rounded-md border border-border bg-background px-3 py-2 text-sm"
         >
           <option value="createdAt_desc">Newest</option>
           <option value="price_asc">Price: Low to High</option>
@@ -185,8 +185,8 @@ export default function ProductsListing({
 
       {products.length === 0 ? (
         <div className="py-16 text-center">
-          <p className="text-xl text-brand-text-muted">No products found</p>
-          <p className="mt-2 text-sm text-brand-text-muted">Try a different search or category</p>
+          <p className="text-xl text-muted-foreground">No products found</p>
+          <p className="mt-2 text-sm text-muted-foreground">Try a different search or category</p>
         </div>
       ) : (
         <>
@@ -200,7 +200,7 @@ export default function ProductsListing({
               <button
                 onClick={loadMore}
                 disabled={loadingMore}
-                className="rounded-full border-2 border-brand-primary px-8 py-3 text-sm font-semibold uppercase tracking-wider text-brand-primary transition-colors hover:bg-brand-primary hover:text-brand-primary-contrast disabled:opacity-60"
+                className="rounded-full border-2 border-primary px-8 py-3 text-sm font-semibold uppercase tracking-wider text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
               >
                 {loadingMore ? 'Loading…' : 'Load more'}
               </button>

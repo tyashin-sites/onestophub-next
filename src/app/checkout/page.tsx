@@ -324,10 +324,10 @@ export default function CheckoutPage() {
   };
 
   const inputClass =
-    'w-full rounded-brand-md border border-brand-border bg-brand-bg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/30';
-  const labelClass = 'text-xs uppercase tracking-wider text-brand-text-muted mb-1 block';
+    'w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30';
+  const labelClass = 'text-xs uppercase tracking-wider text-muted-foreground mb-1 block';
   const getInputClass = (f: CheckoutField) =>
-    `${inputClass}${fieldErrors[f] ? ' border-brand-danger focus:ring-brand-danger/30' : ''}`;
+    `${inputClass}${fieldErrors[f] ? ' border-destructive focus:ring-destructive/30' : ''}`;
 
   // suppress unused var warning for loadingDefaults — used to disable country select
   void loadingDefaults;
@@ -339,50 +339,50 @@ export default function CheckoutPage() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">
-          <section className="bg-brand-surface py-10 md:py-16">
+          <section className="bg-cream py-10 md:py-16">
             <div className="container mx-auto px-4 text-center">
-              <h1 className="text-3xl font-bold text-brand-text md:text-4xl">Checkout</h1>
+              <h1 className="text-3xl font-bold text-foreground md:text-4xl">Checkout</h1>
             </div>
           </section>
           <section className="py-8 md:py-12">
             <div className="container mx-auto max-w-4xl px-4">
               {!cart || cart.items.length === 0 ? (
                 <div className="py-16 text-center">
-                  <p className="text-xl text-brand-text-muted">Your cart is empty</p>
+                  <p className="text-xl text-muted-foreground">Your cart is empty</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="grid gap-8 lg:grid-cols-3">
                   <div className="space-y-6 lg:col-span-2">
                     {/* Contact */}
-                    <div className="rounded-brand-lg border border-brand-border bg-brand-bg p-6">
-                      <h3 className="mb-4 text-lg font-semibold text-brand-text">Contact Information</h3>
+                    <div className="rounded-lg border border-border bg-background p-6">
+                      <h3 className="mb-4 text-lg font-semibold text-foreground">Contact Information</h3>
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
                           <label className={labelClass}>Full Name *</label>
                           <input required value={form.customerName} onChange={(e) => update('customerName', e.target.value)} className={getInputClass('customerName')} />
-                          {fieldErrors.customerName && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.customerName}</p>}
+                          {fieldErrors.customerName && <p className="mt-1 text-sm text-destructive">{fieldErrors.customerName}</p>}
                         </div>
                         <div>
                           <label className={labelClass}>Email *</label>
                           <input required type="email" value={form.customerEmail} onChange={(e) => update('customerEmail', e.target.value)} className={getInputClass('customerEmail')} />
-                          {fieldErrors.customerEmail && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.customerEmail}</p>}
+                          {fieldErrors.customerEmail && <p className="mt-1 text-sm text-destructive">{fieldErrors.customerEmail}</p>}
                         </div>
                         <div className="sm:col-span-2">
                           <label className={labelClass}>Phone *</label>
                           <input required type="tel" value={form.customerPhone} onChange={(e) => update('customerPhone', e.target.value)} className={getInputClass('customerPhone')} />
-                          {fieldErrors.customerPhone && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.customerPhone}</p>}
+                          {fieldErrors.customerPhone && <p className="mt-1 text-sm text-destructive">{fieldErrors.customerPhone}</p>}
                         </div>
                       </div>
                     </div>
 
                     {/* Address */}
-                    <div className="rounded-brand-lg border border-brand-border bg-brand-bg p-6">
-                      <h3 className="mb-4 text-lg font-semibold text-brand-text">Shipping Address</h3>
+                    <div className="rounded-lg border border-border bg-background p-6">
+                      <h3 className="mb-4 text-lg font-semibold text-foreground">Shipping Address</h3>
                       <div className="grid gap-4">
                         <div>
                           <label className={labelClass}>Address Line 1 *</label>
                           <input required value={form.line1} onChange={(e) => update('line1', e.target.value)} className={getInputClass('line1')} />
-                          {fieldErrors.line1 && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.line1}</p>}
+                          {fieldErrors.line1 && <p className="mt-1 text-sm text-destructive">{fieldErrors.line1}</p>}
                         </div>
                         <div>
                           <label className={labelClass}>Address Line 2</label>
@@ -392,24 +392,24 @@ export default function CheckoutPage() {
                           <div>
                             <label className={labelClass}>City *</label>
                             <input required value={form.city} onChange={(e) => update('city', e.target.value)} className={getInputClass('city')} />
-                            {fieldErrors.city && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.city}</p>}
+                            {fieldErrors.city && <p className="mt-1 text-sm text-destructive">{fieldErrors.city}</p>}
                           </div>
                           <div>
                             <label className={labelClass}>State *</label>
                             <input required value={form.state} onChange={(e) => update('state', e.target.value)} className={getInputClass('state')} />
-                            {fieldErrors.state && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.state}</p>}
+                            {fieldErrors.state && <p className="mt-1 text-sm text-destructive">{fieldErrors.state}</p>}
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className={labelClass}>Postal Code *</label>
                             <input required value={form.postalCode} onChange={(e) => update('postalCode', e.target.value)} className={getInputClass('postalCode')} />
-                            {fieldErrors.postalCode && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.postalCode}</p>}
+                            {fieldErrors.postalCode && <p className="mt-1 text-sm text-destructive">{fieldErrors.postalCode}</p>}
                           </div>
                           <div>
                             <label className={labelClass}>Country *</label>
                             {singleAllowedCountry ? (
-                              <div className="flex min-h-[44px] items-center rounded-brand-md border border-brand-border bg-brand-surface px-4 py-2.5 text-sm">
+                              <div className="flex min-h-[44px] items-center rounded-md border border-border bg-cream px-4 py-2.5 text-sm">
                                 {getCountryName(singleAllowedCountry.code)}
                               </div>
                             ) : (
@@ -427,19 +427,19 @@ export default function CheckoutPage() {
                                 ))}
                               </select>
                             )}
-                            {fieldErrors.country && <p className="mt-1 text-sm text-brand-danger">{fieldErrors.country}</p>}
+                            {fieldErrors.country && <p className="mt-1 text-sm text-destructive">{fieldErrors.country}</p>}
                           </div>
                         </div>
-                        {addressError && <p className="text-sm text-brand-danger">{addressError}</p>}
+                        {addressError && <p className="text-sm text-destructive">{addressError}</p>}
                       </div>
                     </div>
 
                     {/* Payment */}
-                    <div className="rounded-brand-lg border border-brand-border bg-brand-bg p-6">
-                      <h3 className="mb-4 text-lg font-semibold text-brand-text">Payment Method</h3>
+                    <div className="rounded-lg border border-border bg-background p-6">
+                      <h3 className="mb-4 text-lg font-semibold text-foreground">Payment Method</h3>
                       <div className="space-y-2">
                         {enabledMethods.map((opt) => (
-                          <label key={opt.value} className="flex cursor-pointer items-center gap-3 rounded-brand-md border border-brand-border p-3 transition-colors hover:bg-brand-surface">
+                          <label key={opt.value} className="flex cursor-pointer items-center gap-3 rounded-md border border-border p-3 transition-colors hover:bg-cream">
                             <input
                               type="radio"
                               name="paymentMethod"
@@ -452,7 +452,7 @@ export default function CheckoutPage() {
                           </label>
                         ))}
                         {enabledMethods.length === 0 && (
-                          <p className="text-sm text-brand-danger">
+                          <p className="text-sm text-destructive">
                             No payment methods available. Please contact the store.
                           </p>
                         )}
@@ -460,7 +460,7 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Note */}
-                    <div className="rounded-brand-lg border border-brand-border bg-brand-bg p-6">
+                    <div className="rounded-lg border border-border bg-background p-6">
                       <label className={labelClass}>Order Note (optional)</label>
                       <textarea
                         value={form.customerNote}
@@ -473,68 +473,68 @@ export default function CheckoutPage() {
 
                   {/* Summary */}
                   <div className="lg:col-span-1">
-                    <div className="sticky top-24 rounded-brand-lg border border-brand-border bg-brand-bg p-6">
-                      <h3 className="mb-4 text-lg font-semibold text-brand-text">Order Summary</h3>
+                    <div className="sticky top-24 rounded-lg border border-border bg-background p-6">
+                      <h3 className="mb-4 text-lg font-semibold text-foreground">Order Summary</h3>
                       <div className="mb-4 space-y-3">
                         {cart.items.map((item) => (
                           <div
                             key={`${item.productId}-${item.variantId}`}
                             className="flex justify-between text-sm"
                           >
-                            <span className="truncate pr-2 text-brand-text-muted">
+                            <span className="truncate pr-2 text-muted-foreground">
                               {item.name} × {item.quantity}
                             </span>
                             <span>{formatPrice(item.price * item.quantity, currency)}</span>
                           </div>
                         ))}
                       </div>
-                      <div className="space-y-2 border-t border-brand-border pt-3 text-sm">
+                      <div className="space-y-2 border-t border-border pt-3 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-brand-text-muted">Subtotal</span>
+                          <span className="text-muted-foreground">Subtotal</span>
                           <span>{formatPrice(cart.subtotal, currency)}</span>
                         </div>
                         {cart.discountAmount > 0 && (
-                          <div className="flex justify-between text-brand-success">
+                          <div className="flex justify-between text-sage">
                             <span>Discount</span>
                             <span>-{formatPrice(cart.discountAmount, currency)}</span>
                           </div>
                         )}
                         <div className="flex items-start justify-between gap-4">
-                          <span className="text-brand-text-muted">Shipping</span>
+                          <span className="text-muted-foreground">Shipping</span>
                           <div className="text-right">
                             {shippingQuote.loading ? (
-                              <span className="text-brand-text-muted">Calculating...</span>
+                              <span className="text-muted-foreground">Calculating...</span>
                             ) : shippingQuote.matched && shippingQuote.rate != null ? (
                               <>
-                                <span className={shippingQuote.rate === 0 ? 'font-medium text-brand-success' : undefined}>
+                                <span className={shippingQuote.rate === 0 ? 'font-medium text-sage' : undefined}>
                                   {shippingQuote.rate === 0 ? 'FREE' : formatPrice(shippingQuote.rate, shippingCurrency)}
                                 </span>
                                 {shippingQuote.estimatedDays && (
-                                  <p className="mt-1 text-xs text-brand-text-muted">
+                                  <p className="mt-1 text-xs text-muted-foreground">
                                     {shippingQuote.estimatedDays}
                                     {shippingConfirmationNote ? `, ${shippingConfirmationNote}` : ''}
                                   </p>
                                 )}
                               </>
                             ) : quoteCountry && quoteRegion && quotePostalCode ? (
-                              <span className="text-brand-danger">Unavailable</span>
+                              <span className="text-destructive">Unavailable</span>
                             ) : (
-                              <span className="text-brand-text-muted">Enter country, state, and postal code</span>
+                              <span className="text-muted-foreground">Enter country, state, and postal code</span>
                             )}
                           </div>
                         </div>
                         {!cart.taxInclusive && cart.taxAmount != null && cart.taxAmount > 0 && (
                           <div className="flex justify-between">
-                            <span className="text-brand-text-muted">
+                            <span className="text-muted-foreground">
                               {cart.taxName || store?.taxName || 'Tax'}
                               {store?.taxRate && <span className="ml-1 text-xs">({store.taxRate}%)</span>}
                             </span>
                             <span>{formatPrice(cart.taxAmount, currency)}</span>
                           </div>
                         )}
-                        <div className="flex justify-between border-t border-brand-border pt-2 text-base font-semibold">
+                        <div className="flex justify-between border-t border-border pt-2 text-base font-semibold">
                           <span>Total</span>
-                          <span className="text-brand-primary">
+                          <span className="text-primary">
                             {formatPrice(displayedTotal, shippingCurrency)}
                           </span>
                         </div>
@@ -543,7 +543,7 @@ export default function CheckoutPage() {
                       <button
                         type="submit"
                         disabled={submitting || enabledMethods.length === 0 || Boolean(addressError)}
-                        className="mt-6 w-full rounded-full bg-brand-primary py-3 text-sm font-semibold uppercase tracking-wider text-brand-primary-contrast transition-colors hover:bg-brand-primary/90 disabled:opacity-50"
+                        className="mt-6 w-full rounded-full bg-primary py-3 text-sm font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
                       >
                         {submitting ? 'Processing...' : 'Place Order'}
                       </button>

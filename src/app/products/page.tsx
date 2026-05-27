@@ -63,10 +63,10 @@ export default async function ProductsPage({
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="bg-brand-surface py-10 md:py-16">
+        <section className="bg-cream py-10 md:py-16">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl font-bold text-brand-text md:text-4xl">Our Shop</h1>
-            <p className="mt-2 text-brand-text-muted">Find the perfect gift for every occasion</p>
+            <h1 className="text-3xl font-bold text-foreground md:text-4xl">Our Shop</h1>
+            <p className="mt-2 text-muted-foreground">Find the perfect gift for every occasion</p>
           </div>
         </section>
         <section className="py-8 md:py-12">

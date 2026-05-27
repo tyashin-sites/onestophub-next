@@ -1,35 +1,80 @@
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /*
- * Brand kit CSS is loaded as an external stylesheet in layout.tsx
- * (see <link rel="stylesheet" href={BRAND_KIT_CSS_URL} />). That file
- * defines --brand-* custom properties at :root, which the Tailwind theme
- * consumes via `var(--brand-…, fallback)`. This file is for layout-level
- * resets and any global tweaks that don't fit the Tailwind theme.
+ * Design tokens — ported verbatim from the Lovable storefront so the new
+ * Next.js build matches the existing live site pixel-for-pixel.
+ *
+ * Tyashin's /brand-kit.css is ALSO loaded by the layout (via the rewrite
+ * proxy to onestophub.sites.tyashin.com) — it defines a separate set of
+ * --brand-* variables. They coexist here without colliding.
  */
+@layer base {
+  :root {
+    --background: 30 33% 98%;
+    --foreground: 350 30% 18%;
 
-:root {
-  /* Fallbacks if /brand-kit.css fails to load. Values mirror the current
-     OneStopHub brand kit so the page never renders unstyled. */
-  --brand-primary: #dabeb2;
-  --brand-primary-contrast: #0a0a0a;
-  --brand-accent: #e5d9be;
-  --brand-background: #ffffff;
-  --brand-surface: #f8f9fb;
-  --brand-text: #0a0a0a;
-  --brand-text-muted: #525867;
-  --brand-border: #e5e7eb;
-  --footer-bg: #6b2e38;
-  --footer-text: #fcfaf8;
-  --footer-link: #fcfaf8;
+    --card: 30 30% 97%;
+    --card-foreground: 350 30% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 350 30% 18%;
+
+    --primary: 350 40% 30%;
+    --primary-foreground: 30 33% 98%;
+
+    --secondary: 38 55% 75%;
+    --secondary-foreground: 350 30% 18%;
+
+    --muted: 30 20% 93%;
+    --muted-foreground: 350 10% 45%;
+
+    --accent: 345 45% 75%;
+    --accent-foreground: 350 30% 18%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 20% 88%;
+    --input: 30 20% 88%;
+    --ring: 350 40% 30%;
+
+    --radius: 0.75rem;
+
+    --gold: 38 60% 55%;
+    --gold-light: 38 55% 75%;
+    --blush: 345 45% 85%;
+    --sage: 140 20% 55%;
+    --cream: 35 40% 95%;
+
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Nunito Sans', sans-serif;
+  }
 }
 
-html, body {
-  background: var(--brand-background);
-  color: var(--brand-text);
-  font-family: var(--brand-body-font, Inter), Inter, system-ui, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--brand-heading-font, Inter), Inter, system-ui, sans-serif;
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(38 60% 55%), hsl(38 55% 75%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 }

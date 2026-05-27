@@ -76,10 +76,10 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
   const href = `/products/${product.slug}`;
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-brand-lg border border-brand-border bg-brand-bg transition-all duration-300 hover:shadow-lg">
+    <div className="group flex flex-col overflow-hidden rounded-lg border border-border bg-background transition-all duration-300 hover:shadow-lg">
       <Link
         href={href}
-        className="relative block aspect-square shrink-0 overflow-hidden bg-brand-surface"
+        className="relative block aspect-square shrink-0 overflow-hidden bg-cream"
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
@@ -94,12 +94,12 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
             loading="lazy"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-brand-text-muted">
+          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
             No image
           </div>
         )}
         {discount > 0 && (
-          <span className="absolute right-3 top-3 rounded-brand-sm bg-brand-danger px-2 py-0.5 text-xs font-semibold text-white">
+          <span className="absolute right-3 top-3 rounded-sm bg-destructive px-2 py-0.5 text-xs font-semibold text-white">
             -{discount}%
           </span>
         )}
@@ -119,28 +119,28 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
       <div className="flex flex-1 flex-col p-4">
         <div className="flex-1">
           <Link href={href}>
-            <h3 className="line-clamp-1 text-base font-semibold text-brand-text group-hover:text-brand-primary">
+            <h3 className="line-clamp-1 text-base font-semibold text-foreground group-hover:text-primary">
               {product.name}
             </h3>
           </Link>
-          <p className="mt-1 line-clamp-2 text-xs text-brand-text-muted">
+          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
             {product.shortDescription || product.description}
           </p>
         </div>
 
         <div className="mt-3">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-brand-primary">
+            <span className="text-lg font-bold text-primary">
               {formatPrice(product.price, currency)}
             </span>
             {product.compareAtPrice && product.compareAtPrice > product.price && (
-              <span className="text-sm text-brand-text-muted line-through">
+              <span className="text-sm text-muted-foreground line-through">
                 {formatPrice(product.compareAtPrice, currency)}
               </span>
             )}
           </div>
           {store && store.taxName && (
-            <p className="mt-0.5 text-[10px] text-brand-text-muted">
+            <p className="mt-0.5 text-[10px] text-muted-foreground">
               {store.taxInclusive
                 ? `inclusive of all taxes`
                 : `+ ${store.taxName}${store.taxRate ? ` ${store.taxRate}%` : ''}`}
@@ -149,14 +149,14 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
         </div>
 
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <div className="flex items-center self-stretch overflow-hidden rounded-full border border-brand-border sm:shrink-0 sm:self-auto">
+          <div className="flex items-center self-stretch overflow-hidden rounded-full border border-border sm:shrink-0 sm:self-auto">
             <button
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setQuantity((q) => Math.max(1, q - 1));
               }}
-              className="flex h-8 flex-1 items-center justify-center text-brand-text-muted transition-colors hover:bg-brand-surface hover:text-brand-text sm:w-8 sm:flex-none"
+              className="flex h-8 flex-1 items-center justify-center text-muted-foreground transition-colors hover:bg-cream hover:text-foreground sm:w-8 sm:flex-none"
               aria-label="Decrease quantity"
             >
               <Minus className="h-3 w-3" />
@@ -168,7 +168,7 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
                 e.stopPropagation();
                 setQuantity((q) => q + 1);
               }}
-              className="flex h-8 flex-1 items-center justify-center text-brand-text-muted transition-colors hover:bg-brand-surface hover:text-brand-text sm:w-8 sm:flex-none"
+              className="flex h-8 flex-1 items-center justify-center text-muted-foreground transition-colors hover:bg-cream hover:text-foreground sm:w-8 sm:flex-none"
               aria-label="Increase quantity"
             >
               <Plus className="h-3 w-3" />
@@ -177,7 +177,7 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
           <button
             onClick={handleAdd}
             disabled={adding}
-            className="w-full rounded-full bg-brand-primary py-2 text-xs font-semibold uppercase tracking-wider text-brand-primary-contrast transition-colors hover:bg-brand-primary/90 disabled:opacity-60 sm:flex-1"
+            className="w-full rounded-full bg-primary py-2 text-xs font-semibold uppercase tracking-wider text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60 sm:flex-1"
           >
             {adding ? 'Adding…' : `Add ${quantity > 1 ? quantity : ''} to Cart`.trim()}
           </button>

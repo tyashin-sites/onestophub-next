@@ -2,6 +2,18 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 initOpenNextCloudflareForDev();
 
 const nextConfig = {
+  // Inline the storefront public API key into the client bundle at build time.
+  // The X-API-Key for `/api/v1/public/*` is public by design (the existing
+  // Lovable site has it in clear text); inlining here just avoids hardcoding
+  // it in source. Build with `TYASHIN_API_KEY=ak_… npx @opennextjs/cloudflare build`.
+  env: {
+    NEXT_PUBLIC_TYASHIN_API_KEY: process.env.TYASHIN_API_KEY || '',
+    NEXT_PUBLIC_TYASHIN_STOREFRONT_URL:
+      process.env.TYASHIN_STOREFRONT_URL ||
+      'https://website-api.tyashin.com/api/v1/public/ecommerce',
+    NEXT_PUBLIC_PROJECT_ID: process.env.PROJECT_ID || '69dc76525f72612b58028164',
+    NEXT_PUBLIC_TYASHIN_API_URL: process.env.TYASHIN_API_URL || 'https://website-api.tyashin.com',
+  },
   images: {
     remotePatterns: [
       // Tyashin-served product images live on the platform API host.

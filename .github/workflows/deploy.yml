@@ -29,6 +29,17 @@ jobs:
         run: npm install
 
       - name: Build with OpenNext
+        # TYASHIN_API_KEY must be present at build time so Next.js can inline it
+        # into the client bundle (it ends up as window.…NEXT_PUBLIC_TYASHIN_API_KEY).
+        # The X-API-Key for /api/v1/public/* is public-by-design, same as the
+        # Lovable site that ships it in clear text. If the secret isn't set on
+        # the repo the build still succeeds, but client-side cart/checkout will
+        # 401 until the secret is added and the workflow re-run.
+        env:
+          TYASHIN_API_KEY: ${{ secrets.TYASHIN_API_KEY }}
+          TYASHIN_STOREFRONT_URL: https://website-api.tyashin.com/api/v1/public/ecommerce
+          TYASHIN_API_URL: https://website-api.tyashin.com
+          PROJECT_ID: 69dc76525f72612b58028164
         run: npx @opennextjs/cloudflare build
 
       - name: Deploy to Workers

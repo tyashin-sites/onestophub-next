@@ -4,9 +4,17 @@ import { Providers } from '@/components/Providers';
 import { api } from '@/lib/api';
 import type { StoreInfo, ApiCategory } from '@/lib/types';
 
-const BRAND_KIT_CSS_URL =
-  process.env.BRAND_KIT_CSS_URL || 'https://website-api.tyashin.com/brand-kit.css';
-
+/**
+ * Brand kit + Tyashin runtime are intercepted by the Tyashin dispatch layer
+ * BEFORE the request reaches this Worker — but only when the page is served
+ * via the storefront's own origin (www.1stophub.shop or any dispatched host).
+ * On those origins, `/brand-kit.css` and `/tyashin-runtime.js` return the
+ * project's brand kit + runtime same-origin.
+ *
+ * When the Worker is accessed directly at *.workers.dev (dev / QA), these URLs
+ * 404 because the dispatch interception isn't in front of the Worker. That's
+ * fine — globals.css ships fallback CSS variables so the site is still themed.
+ */
 const ROBOTS_NOINDEX = process.env.ROBOTS_NOINDEX === 'true';
 
 export const metadata: Metadata = {
@@ -40,7 +48,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <head>
-        <link rel="stylesheet" href={BRAND_KIT_CSS_URL} />
+        {/* Same-origin: served by Tyashin dispatch on storefront hosts.
+            Returns 404 on direct *.workers.dev — fallback vars in globals.css. */}
+        <link rel="stylesheet" href="/brand-kit.css" />
         <link rel="preconnect" href="https://website-api.tyashin.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -48,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
-        <script src="https://website-api.tyashin.com/tyashin-runtime.js" defer />
+        <script src="/tyashin-runtime.js" defer />
       </head>
       <body className="bg-brand-bg text-brand-text antialiased">
         <Providers initialStore={initialStore} initialCategories={initialCategories}>

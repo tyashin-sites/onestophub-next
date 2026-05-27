@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "framework": "nextjs",
+  "projectId": "69dc76525f72612b58028164",
+  "projectSlug": "onestophub",
+  "generatedAt": "2026-05-26T00:00:00.000Z",
+  "pages": {
+    "/": { "file": "src/app/page.tsx", "isServerComponent": true },
+    "/products": { "file": "src/app/products/page.tsx", "isServerComponent": true },
+    "/category/[slug]": { "file": "src/app/category/[slug]/page.tsx", "isServerComponent": true },
+    "/c/[slug]": { "file": "src/app/c/[slug]/page.tsx", "isServerComponent": true },
+    "/products/[slug]": { "file": "src/app/products/[slug]/page.tsx", "isServerComponent": true },
+    "/cart": { "file": "src/app/cart/page.tsx", "isServerComponent": false },
+    "/checkout": { "file": "src/app/checkout/page.tsx", "isServerComponent": false },
+    "/about": { "file": "src/app/about/page.tsx", "isServerComponent": true },
+    "/contact": { "file": "src/app/contact/page.tsx", "isServerComponent": true },
+    "/faq": { "file": "src/app/faq/page.tsx", "isServerComponent": true }
+  },
+  "tyashinOwnedRoutes": [
+    "/order-status", "/order-status/lookup", "/order-confirmation",
+    "/cart-recovery", "/unsubscribe", "/email-preferences",
+    "/reviews", "/returns/new", "/returns", "/returns/status",
+    "/privacy-request", "/consent-center",
+    "/sitemap.xml", "/robots.txt", "/brand-kit.css", "/tyashin-runtime.js"
+  ]
+}

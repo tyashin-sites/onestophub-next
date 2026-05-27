@@ -1,0 +1,86 @@
+name: Deploy to Cloudflare Workers
+
+# Mirrors tyashin-sites/team-website-moj7aqqd (Thridify) deploy pipeline:
+#   1. install deps
+#   2. opennext build (.open-next/worker.js + .open-next/assets)
+#   3. wrangler deploy
+#   4. fetch per-project secrets from Tyashin and `wrangler secret put` each
+#   5. notify Tyashin so the admin panel shows the latest commit/version
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build with OpenNext
+        run: npx @opennextjs/cloudflare build
+
+      - name: Deploy to Workers
+        id: deploy
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
+      - name: Set Worker secrets
+        if: steps.deploy.outcome == 'success'
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          SECRETS_JSON=$(curl -sS "${{ secrets.TYASHIN_API_URL }}/api/v1/builds/secrets/${{ github.repository }}" \
+            -H "X-Build-Secret: ${{ secrets.TYASHIN_BUILD_SECRET }}")
+
+          echo "$SECRETS_JSON" | node -e "
+            const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            if (data.success && data.data) {
+              for (const [key, val] of Object.entries(data.data)) {
+                const { execSync } = require('child_process');
+                execSync('echo ' + JSON.stringify(val) + ' | npx wrangler secret put ' + key, { stdio: 'pipe' });
+                console.log('Set secret: ' + key);
+              }
+            }
+          "
+
+      - name: Notify Tyashin (success)
+        if: success()
+        run: |
+          curl -sS -X POST "${{ secrets.TYASHIN_API_URL }}/api/v1/builds/webhook" \
+            -H "Content-Type: application/json" \
+            -H "X-Build-Secret: ${{ secrets.TYASHIN_BUILD_SECRET }}" \
+            -d '{
+              "repo": "${{ github.repository }}",
+              "commit_sha": "${{ github.sha }}",
+              "status": "success",
+              "run_id": "${{ github.run_id }}"
+            }'
+
+      - name: Notify Tyashin (failure)
+        if: failure()
+        run: |
+          curl -sS -X POST "${{ secrets.TYASHIN_API_URL }}/api/v1/builds/webhook" \
+            -H "Content-Type: application/json" \
+            -H "X-Build-Secret: ${{ secrets.TYASHIN_BUILD_SECRET }}" \
+            -d '{
+              "repo": "${{ github.repository }}",
+              "commit_sha": "${{ github.sha }}",
+              "status": "failed",
+              "run_id": "${{ github.run_id }}",
+              "error": "Build failed — see https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }'

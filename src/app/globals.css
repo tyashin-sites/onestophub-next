@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+
+/*
+ * Brand kit CSS is loaded as an external stylesheet in layout.tsx
+ * (see <link rel="stylesheet" href={BRAND_KIT_CSS_URL} />). That file
+ * defines --brand-* custom properties at :root, which the Tailwind theme
+ * consumes via `var(--brand-…, fallback)`. This file is for layout-level
+ * resets and any global tweaks that don't fit the Tailwind theme.
+ */
+
+:root {
+  /* Fallbacks if /brand-kit.css fails to load. Values mirror the current
+     OneStopHub brand kit so the page never renders unstyled. */
+  --brand-primary: #dabeb2;
+  --brand-primary-contrast: #0a0a0a;
+  --brand-accent: #e5d9be;
+  --brand-background: #ffffff;
+  --brand-surface: #f8f9fb;
+  --brand-text: #0a0a0a;
+  --brand-text-muted: #525867;
+  --brand-border: #e5e7eb;
+  --footer-bg: #6b2e38;
+  --footer-text: #fcfaf8;
+  --footer-link: #fcfaf8;
+}
+
+html, body {
+  background: var(--brand-background);
+  color: var(--brand-text);
+  font-family: var(--brand-body-font, Inter), Inter, system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--brand-heading-font, Inter), Inter, system-ui, sans-serif;
+}

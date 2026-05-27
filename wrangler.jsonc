@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Worker name. Suffix `-next` distinguishes the experimental build from the
+  // current Lovable-on-R2 deployment. At cutover Tyashin will point
+  // `projects.workerDeployment.scriptName` at this script.
+  "name": "site-onestophub-next",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    // Public storefront API base. The new site is a thin renderer over Tyashin's
+    // public e-commerce API — no DB / KV / R2 bindings on this Worker.
+    "TYASHIN_API_URL": "https://website-api.tyashin.com",
+    "TYASHIN_STOREFRONT_URL": "https://website-api.tyashin.com/api/v1/public/ecommerce",
+    "PROJECT_ID": "69dc76525f72612b58028164",
+    "PROJECT_SLUG": "onestophub",
+    // Brand kit CSS is served by the platform (Tyashin-owned, locked). Loading
+    // it via <link> in layout.tsx means colour changes propagate without a redeploy.
+    "BRAND_KIT_CSS_URL": "https://website-api.tyashin.com/brand-kit.css",
+    // Robots gate — true on preview hostnames (`next.1stophub.shop`) until cutover.
+    // Flip to "false" via `wrangler secret put` when the canary moves to the prod host.
+    "ROBOTS_NOINDEX": "true"
+  }
+  // Secrets (set via the deploy.yml secrets-fetch step):
+  //   TYASHIN_API_KEY              — project's public X-API-Key (ak_AgJSxiU...)
+  //   (more added by Tyashin as plugins demand)
+}

@@ -53,6 +53,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             override the Lovable defaults if/when an admin tweaks the brand
             kit in the platform. Same-origin via the rewrite proxy. */}
         <link rel="stylesheet" href="/brand-kit.css" />
+        {/* Blog RSS auto-discovery — feed itself is served by the Tyashin
+            platform at /blog/rss.xml (same-origin, intercepted at dispatch
+            on customer hosts; proxied to onestophub.sites.tyashin.com on
+            direct workers.dev). Letting crawlers and feed readers find it
+            is the cheapest distribution surface we have. */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="OneStopHub Blog"
+          href="/blog/rss.xml"
+        />
         <link rel="preconnect" href="https://website-api.tyashin.com" />
         {/* Playfair Display + Nunito Sans are pulled by the @import in
             globals.css — no extra <link> tags needed. */}

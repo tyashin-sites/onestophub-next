@@ -1,18 +1,53 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Trash2, Minus, Plus } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useCart, useStore, toast, toastError } from '@/components/Providers';
 import { formatPrice } from '@/lib/format';
+import { getOrderNote, setOrderNote, ORDER_NOTE_EVENT } from '@/lib/order-note';
 
 export default function CartPage() {
   const { cart, loading, updateItem, removeItem, clearCart, applyCoupon, removeCoupon } = useCart();
   const { store } = useStore();
   const [couponInput, setCouponInput] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
+  /**
+   * "Special order instructions" — synced with the checkout page via
+   * localStorage (`tyashin_order_note`). Initialized empty so SSR matches
+   * the first client render; populated in the effect below.
+   */
+  const [note, setNote] = useState('');
+
+  useEffect(() => {
+    setNote(getOrderNote());
+    const onExternalChange = (e: Event) => {
+      const next = (e as CustomEvent<string>).detail ?? getOrderNote();
+      setNote(next);
+    };
+    window.addEventListener(ORDER_NOTE_EVENT, onExternalChange);
+    // Cross-tab updates: storage events fire on tabs that did NOT do the write.
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'tyashin_order_note') setNote(e.newValue ?? '');
+    };
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(ORDER_NOTE_EVENT, onExternalChange);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
+  const onNoteChange = (value: string) => {
+    setNote(value);
+    setOrderNote(value);
+    // Tell the checkout page (open in another tab or already mounted) to
+    // refresh its initial form value. Same-tab listeners pick this up too.
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(ORDER_NOTE_EVENT, { detail: value }));
+    }
+  };
 
   const handleQty = async (productId: string, variantId: string | null, newQty: number) => {
     try {
@@ -120,6 +155,32 @@ export default function CartPage() {
                       </div>
                     </div>
                   ))}
+
+                  {/*
+                   * Special order instructions — synced with the checkout
+                   * page via localStorage. Editing here updates the value on
+                   * /checkout (and vice-versa); the note is sent with the
+                   * order payload and surfaced in the merchant's WhatsApp
+                   * message when paying that way.
+                   */}
+                  <div className="rounded-lg border border-border bg-background p-4">
+                    <label
+                      htmlFor="order-note"
+                      className="text-xs uppercase tracking-wider text-muted-foreground"
+                    >
+                      Special Order Instructions (optional)
+                    </label>
+                    <textarea
+                      id="order-note"
+                      value={note}
+                      onChange={(e) => onNoteChange(e.target.value)}
+                      rows={3}
+                      maxLength={1000}
+                      placeholder="Gift wrap, custom message, delivery preference, etc."
+                      className="mt-2 w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+
                   <button
                     onClick={() => clearCart()}
                     className="text-xs uppercase tracking-wider text-muted-foreground transition-colors hover:text-destructive"

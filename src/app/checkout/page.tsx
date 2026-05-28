@@ -15,6 +15,12 @@ import {
   getShippingConfirmationNote,
 } from '@/lib/checkout-pricing';
 import { getCountryName, getCountryOptions, normalizeCountryCode } from '@/lib/countries';
+import {
+  clearOrderNote,
+  getOrderNote,
+  setOrderNote,
+  ORDER_NOTE_EVENT,
+} from '@/lib/order-note';
 import type { StoreInfo } from '@/lib/types';
 
 type PaymentMethod = 'online' | 'cod' | 'whatsapp';
@@ -99,6 +105,32 @@ export default function CheckoutPage() {
     if (!ok) setPaymentMethod(enabledMethods[0].value);
   }, [enabledMethods, paymentMethod]);
 
+  /**
+   * Hydrate `customerNote` from localStorage on mount and subscribe to
+   * changes from the cart page (same tab via CustomEvent, other tabs via
+   * `storage`). Writes from this field also push back so the cart page sees
+   * any edits the shopper makes here.
+   */
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, customerNote: getOrderNote() }));
+    const onExternal = (e: Event) => {
+      const next = (e as CustomEvent<string>).detail ?? getOrderNote();
+      setForm((prev) => (prev.customerNote === next ? prev : { ...prev, customerNote: next }));
+    };
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'tyashin_order_note') {
+        const next = e.newValue ?? '';
+        setForm((prev) => (prev.customerNote === next ? prev : { ...prev, customerNote: next }));
+      }
+    };
+    window.addEventListener(ORDER_NOTE_EVENT, onExternal);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(ORDER_NOTE_EVENT, onExternal);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, []);
+
   const update = (field: string, value: string) => {
     setAddressError(null);
     setFieldErrors((prev) => {
@@ -106,6 +138,13 @@ export default function CheckoutPage() {
       return { ...prev, [field]: undefined };
     });
     setForm((prev) => ({ ...prev, [field]: value }));
+    // Keep the cart page's "Special Instructions" textarea in lock-step.
+    if (field === 'customerNote') {
+      setOrderNote(value);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent(ORDER_NOTE_EVENT, { detail: value }));
+      }
+    }
   };
 
   const currency = cart?.currency || 'INR';
@@ -298,11 +337,24 @@ export default function CheckoutPage() {
         return;
       }
 
+      // Order is created — the special-instructions note is now persisted
+      // on the order, so we can clear the cross-page draft.
+      clearOrderNote();
+
       if (paymentMethod === 'whatsapp' && data.whatsapp) {
-        window.open(data.whatsapp.url, '_blank');
+        // Navigate the current tab to wa.me. On mobile this triggers the
+        // WhatsApp app deep-link (the wa.me handler installed by WhatsApp).
+        // On desktop it opens web.whatsapp.com. window.open(_, '_blank') is
+        // unreliable on mobile — popup blockers eat it in async contexts,
+        // and the user has no way back to the merchant when it does work.
+        // The order is created server-side first; the order-confirmation
+        // page surfaces a "Resend on WhatsApp" link as a backup.
+        void refreshCart();
+        window.location.href = data.whatsapp.url;
+        return;
       }
 
-      // COD + WhatsApp fall through to the order confirmation page.
+      // COD falls through to the order confirmation page.
       void refreshCart();
       window.location.assign(confirmPath);
     } catch (err: unknown) {

@@ -177,3 +177,32 @@ export interface ApiEnvelope<T> {
   meta?: ApiMeta;
   error?: { code: string; message: string };
 }
+
+/* ------------------------------------------------------------------ */
+/*  Blog                                                                */
+/* ------------------------------------------------------------------ */
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  contentFormat?: 'html' | 'markdown';
+  featuredImage?: string;
+  authorName?: string;
+  categoryId?: string;
+  tags?: string[];
+  seo?: { metaTitle?: string; metaDescription?: string; ogImage?: string };
+  publishedAt?: string;
+  viewCount?: number;
+}
+
+export interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  parentId?: string | null;
+  order?: number;
+}

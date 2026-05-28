@@ -8,6 +8,7 @@ import { useCart } from './Providers';
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'Shop', href: '/products' },
+  { label: 'Blog', href: '/blog' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
 ];

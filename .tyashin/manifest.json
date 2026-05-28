@@ -14,7 +14,9 @@
     "/checkout": { "file": "src/app/checkout/page.tsx", "isServerComponent": false },
     "/about": { "file": "src/app/about/page.tsx", "isServerComponent": true },
     "/contact": { "file": "src/app/contact/page.tsx", "isServerComponent": true },
-    "/faq": { "file": "src/app/faq/page.tsx", "isServerComponent": true }
+    "/faq": { "file": "src/app/faq/page.tsx", "isServerComponent": true },
+    "/blog": { "file": "src/app/blog/page.tsx", "isServerComponent": true },
+    "/blog/[slug]": { "file": "src/app/blog/[slug]/page.tsx", "isServerComponent": true }
   },
   "tyashinOwnedRoutes": [
     "/order-status", "/order-status/lookup", "/order-confirmation",

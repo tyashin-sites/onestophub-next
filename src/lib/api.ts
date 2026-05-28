@@ -19,6 +19,8 @@ import type {
   ApiEnvelope,
   ApiProduct,
   ApiCategory,
+  BlogPost,
+  BlogCategory,
   Cart,
   StoreInfo,
   GeoData,
@@ -33,6 +35,13 @@ const STOREFRONT_BASE =
   (typeof process !== 'undefined' && process.env.TYASHIN_STOREFRONT_URL) ||
   (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_TYASHIN_STOREFRONT_URL) ||
   'https://website-api.tyashin.com/api/v1/public/ecommerce';
+
+/**
+ * Non-ecommerce public endpoints (blog, legal, etc.) hang off the
+ * `/api/v1/public/` root, not `/api/v1/public/ecommerce/`. Derive that root
+ * by stripping the trailing `/ecommerce` segment.
+ */
+const PUBLIC_BASE = STOREFRONT_BASE.replace(/\/ecommerce\/?$/, '');
 
 function getApiKey(): string {
   // On the server, prefer the private env var. In the client bundle, Next
@@ -63,6 +72,24 @@ interface FetchOpts extends RequestInit {
 }
 
 export async function apiFetch<T>(path: string, opts: FetchOpts = {}): Promise<ApiEnvelope<T>> {
+  return apiFetchAt<T>(STOREFRONT_BASE, path, opts);
+}
+
+/**
+ * Same as `apiFetch` but for the non-ecommerce public root (blog, legal, etc.).
+ */
+export async function publicFetch<T>(
+  path: string,
+  opts: FetchOpts = {},
+): Promise<ApiEnvelope<T>> {
+  return apiFetchAt<T>(PUBLIC_BASE, path, opts);
+}
+
+async function apiFetchAt<T>(
+  base: string,
+  path: string,
+  opts: FetchOpts = {},
+): Promise<ApiEnvelope<T>> {
   const { noSession, noStore, revalidate, headers, ...rest } = opts;
   const isServer = typeof window === 'undefined';
   const apiKey = getApiKey();
@@ -80,7 +107,7 @@ export async function apiFetch<T>(path: string, opts: FetchOpts = {}): Promise<A
   const nextOpts: { revalidate?: number } = {};
   if (typeof revalidate === 'number') nextOpts.revalidate = revalidate;
 
-  const res = await fetch(STOREFRONT_BASE + path, {
+  const res = await fetch(base + path, {
     ...rest,
     headers: reqHeaders,
     cache: noStore ? 'no-store' : undefined,
@@ -187,6 +214,36 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
       noStore: true,
+    }),
+
+  /* -- blog (public, cacheable) -------------------------------------- */
+
+  getBlogPosts: (params: Record<string, string | number> = {}) => {
+    const qs = new URLSearchParams(
+      Object.entries(params).map(([k, v]) => [k, String(v)]),
+    ).toString();
+    return publicFetch<BlogPost[]>(`/blog/posts${qs ? '?' + qs : ''}`, {
+      noSession: true,
+      revalidate: 60,
+    });
+  },
+
+  getBlogPost: (slug: string) =>
+    publicFetch<BlogPost>(`/blog/posts/${encodeURIComponent(slug)}`, {
+      noSession: true,
+      revalidate: 60,
+    }),
+
+  getBlogCategories: () =>
+    publicFetch<BlogCategory[]>('/blog/categories', {
+      noSession: true,
+      revalidate: 300,
+    }),
+
+  getRecentBlogPosts: (limit = 5) =>
+    publicFetch<BlogPost[]>(`/blog/recent?limit=${limit}`, {
+      noSession: true,
+      revalidate: 60,
     }),
 };
 

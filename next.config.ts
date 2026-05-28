@@ -67,6 +67,13 @@ const nextConfig = {
       },
       { source: '/sitemap.xml', destination: `${STOREFRONT_ORIGIN}/sitemap.xml` },
       { source: '/robots.txt', destination: `${STOREFRONT_ORIGIN}/robots.txt` },
+      // Blog RSS feed — platform-served at the storefront origin. Canonical
+      // is /blog/rss.xml; the aliases (/rss.xml, /feed, /feed.xml) keep
+      // discovery conventions working from any feed reader / crawler.
+      { source: '/blog/rss.xml', destination: `${STOREFRONT_ORIGIN}/blog/rss.xml` },
+      { source: '/rss.xml', destination: `${STOREFRONT_ORIGIN}/rss.xml` },
+      { source: '/feed', destination: `${STOREFRONT_ORIGIN}/feed` },
+      { source: '/feed.xml', destination: `${STOREFRONT_ORIGIN}/feed.xml` },
       // Legal pages (/terms-and-conditions, /privacy-policy, /return-policy)
       // require the X-API-Key header so they're served via a route handler
       // at src/app/[slug]/route.ts rather than a plain rewrite.

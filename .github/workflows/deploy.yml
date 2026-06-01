@@ -51,10 +51,7 @@ jobs:
             const ghEnv = process.env.GITHUB_ENV;
             for (const [key, val] of Object.entries(data.data)) {
               const v = String(val ?? '');
-              fs.appendFileSync(ghEnv, key + '<<__TYASHIN_EOF__
-' + v + '
-__TYASHIN_EOF__
-');
+              fs.appendFileSync(ghEnv, key + '<<__TYASHIN_EOF__\n' + v + '\n__TYASHIN_EOF__\n');
               console.log('  Exposed to build env: ' + key);
               // Also mask in logs so values don't leak from later steps
               console.log('::add-mask::' + v);

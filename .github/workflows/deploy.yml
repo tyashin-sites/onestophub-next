@@ -22,6 +22,45 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Fetch build-time env from Tyashin
+        # Pulls the project's envSecrets BEFORE the build so any SSR/RSC
+        # fetch that runs during `next build` prerender (e.g. RSC pages
+        # hitting the Tyashin API for products / categories / store-info)
+        # has TYASHIN_API_KEY + TYASHIN_API_URL + PROJECT_ID + SITE_DOMAIN
+        # in process.env. Without this, statically-prerendered pages with
+        # server-side data fetches fail with 401 Unauthorized at build time.
+        #
+        # Same endpoint is called again by the "Set Worker secrets" step
+        # post-deploy to also push these as runtime Worker secrets — the
+        # double-call is intentional: build-time process.env is separate
+        # from the Worker's runtime env binding, both must be populated.
+        run: |
+          SECRETS_JSON=$(curl -sS "${{ secrets.TYASHIN_API_URL }}/api/v1/builds/secrets/${{ github.repository }}" \
+            -H "X-Build-Secret: ${{ secrets.TYASHIN_BUILD_SECRET }}")
+
+          # Export each k/v pair into $GITHUB_ENV so subsequent steps see them.
+          # Use the multiline-safe `KEY<<EOF\nvalue\nEOF` form so values
+          # with newlines (e.g. PEM keys) survive.
+          echo "$SECRETS_JSON" | node -e "
+            const data = JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'));
+            if (!data.success || !data.data) {
+              console.error('No build-time secrets returned:', JSON.stringify(data));
+              process.exit(0); // non-fatal — let build attempt anyway
+            }
+            const fs = require('fs');
+            const ghEnv = process.env.GITHUB_ENV;
+            for (const [key, val] of Object.entries(data.data)) {
+              const v = String(val ?? '');
+              fs.appendFileSync(ghEnv, key + '<<__TYASHIN_EOF__
+' + v + '
+__TYASHIN_EOF__
+');
+              console.log('  Exposed to build env: ' + key);
+              // Also mask in logs so values don't leak from later steps
+              console.log('::add-mask::' + v);
+            }
+          "
+
       - name: Build with OpenNext
         run: npx @opennextjs/cloudflare build
 

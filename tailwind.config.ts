@@ -20,8 +20,10 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        display: ['Playfair Display', 'serif'],
-        body: ['Nunito Sans', 'sans-serif'],
+        // Resolve to the self-hosted next/font faces (var set on <html>), with
+        // the original families as graceful fallbacks.
+        display: ['var(--font-display)', 'Playfair Display', 'serif'],
+        body: ['var(--font-body)', 'Nunito Sans', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',

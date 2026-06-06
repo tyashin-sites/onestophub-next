@@ -38,12 +38,17 @@ export default async function HomePage() {
         <section className="relative overflow-hidden">
           <div className="absolute inset-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
+            {/* LCP image: eager + high fetch priority so the browser loads it
+                first instead of treating it as a low-priority background. */}
             <img
               src="/hero-banner.jpg"
               alt="One Stop Hub collection"
               className="h-full w-full object-cover"
               width={1920}
               height={800}
+              fetchPriority="high"
+              loading="eager"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 via-foreground/40 to-transparent" />
           </div>

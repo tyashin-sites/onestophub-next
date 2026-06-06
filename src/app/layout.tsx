@@ -1,6 +1,24 @@
 import type { Metadata } from 'next';
+import { Playfair_Display, Nunito_Sans } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/Providers';
+
+// Self-hosted, preloaded, swap — replaces the render-blocking Google Fonts
+// @import that used to sit at the top of globals.css. Exposes the CSS vars
+// (--font-display / --font-body) consumed by globals.css + tailwind.config.ts.
+const display = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-display',
+  display: 'swap',
+});
+const body = Nunito_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-body',
+  display: 'swap',
+});
 import LegalFooterBar from '@/components/LegalFooterBar';
 import { api } from '@/lib/api';
 import type { StoreInfo, ApiCategory } from '@/lib/types';
@@ -47,12 +65,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="en">
+    // PERF: font CSS vars + inline base background on <html>/<body> so the
+    // theme color paints on the very first frame (no white-flash filmstrip
+    // frames that inflate mobile Speed Index). Background hex is the resolved
+    // value of --background (30 33% 98%) ≈ a warm near-white cream.
+    <html lang="en" className={`${display.variable} ${body.variable}`} style={{ backgroundColor: '#FBF8F5' }}>
       <head>
-        {/* Tyashin brand kit — loaded after globals.css so its variables can
-            override the Lovable defaults if/when an admin tweaks the brand
-            kit in the platform. Same-origin via the rewrite proxy. */}
-        <link rel="stylesheet" href="/brand-kit.css" />
+        {/* Brand kit is NOT linked here — the Tyashin dispatch layer INLINES it
+            as a <style> on customer hosts (no render-blocking request). Adding
+            a <link href="/brand-kit.css"> would re-introduce a render-blocking
+            resource AND suppress the platform inline (which keys off the link's
+            absence). */}
         {/* Blog RSS auto-discovery — feed itself is served by the Tyashin
             platform at /blog/rss.xml (same-origin, intercepted at dispatch
             on customer hosts; proxied to onestophub.sites.tyashin.com on
@@ -69,7 +92,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             globals.css — no extra <link> tags needed. */}
         <script src="/tyashin-runtime.js" defer />
       </head>
-      <body className="bg-background text-foreground antialiased">
+      <body
+        className="bg-background text-foreground antialiased overflow-x-clip"
+        style={{ backgroundColor: '#FBF8F5' }}
+      >
         <Providers initialStore={initialStore} initialCategories={initialCategories}>
           {children}
           <LegalFooterBar />

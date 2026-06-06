@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito+Sans:wght@300;400;500;600;700&display=swap');
+/* Fonts are self-hosted via next/font (see src/app/layout.tsx) — NO render-
+   blocking Google Fonts @import here. next/font exposes --font-display and
+   --font-body as CSS variables, consumed below and by tailwind.config.ts. */
 
 @tailwind base;
 @tailwind components;
@@ -50,8 +52,7 @@
     --sage: 140 20% 55%;
     --cream: 35 40% 95%;
 
-    --font-display: 'Playfair Display', serif;
-    --font-body: 'Nunito Sans', sans-serif;
+    /* --font-display / --font-body are provided by next/font on <html>. */
   }
 }
 

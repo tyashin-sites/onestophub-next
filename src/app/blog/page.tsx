@@ -106,6 +106,11 @@ function BlogCard({ post }: { post: BlogPost }) {
             {post.title[0]}
           </div>
         )}
+        {post.pinned && (
+          <span className="absolute left-3 top-3 rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground shadow-sm">
+            Featured
+          </span>
+        )}
       </div>
       <div className="flex flex-1 flex-col p-5">
         {date && (

@@ -193,6 +193,9 @@ export interface BlogPost {
   authorName?: string;
   categoryId?: string;
   tags?: string[];
+  // Pinned/featured posts come back first from the public API (backend sorts
+  // pinned-first then newest); surfaced with a "Featured" badge in the list.
+  pinned?: boolean;
   seo?: { metaTitle?: string; metaDescription?: string; ogImage?: string };
   publishedAt?: string;
   viewCount?: number;

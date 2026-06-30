@@ -9,6 +9,22 @@ import type { BlogPost } from '@/lib/types';
 
 const SITE_ORIGIN = 'https://www.1stophub.shop';
 
+// Pre-render every published post at build → served instantly from cache, so
+// clicking a post in the list is immediate (no on-demand SSR round-trip). ISR
+// keeps them fresh; dynamicParams lets posts added after build render on first
+// hit then cache.
+export const revalidate = 60;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const res = await api.getBlogPosts({ limit: 100 });
+    return (res.data ?? []).map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -128,7 +144,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             )}
           </header>
 
-          {post.featuredImage && (
+          {/* Only show a standalone hero when the body doesn't already lead with
+              it. Auto-generated posts inline the featured image at the top of
+              `content`, so rendering featuredImage again here showed it twice. */}
+          {post.featuredImage && !post.content?.includes(post.featuredImage) && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={post.featuredImage}

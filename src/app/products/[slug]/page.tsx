@@ -7,6 +7,21 @@ import Footer from '@/components/Footer';
 import ProductDetailClient from './ProductDetailClient';
 import { api, ApiError } from '@/lib/api';
 
+// Pre-render every product at build → product pages open instantly from cache
+// instead of an on-demand SSR round-trip. ISR keeps prices/stock fresh;
+// dynamicParams lets new products render on first hit then cache.
+export const revalidate = 60;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const res = await api.getProducts({ limit: 200 });
+    return (res.data ?? []).map((p: { slug: string }) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /*  Metadata + JSON-LD                                                 */
 /*  This is the single most SEO-critical surface on the site. We emit  */

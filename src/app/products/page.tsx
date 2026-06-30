@@ -1,14 +1,15 @@
-import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductsListing from './ProductsListing';
 import { api } from '@/lib/api';
+import { pageMetadata } from '@/lib/seo';
 import type { ApiCategory, ApiProduct } from '@/lib/types';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Shop',
   description: 'Browse OneStopHub — gifts, accessories, T-shirts, stationery, and more.',
-};
+  path: '/products',
+});
 
 interface SearchParams {
   category?: string;

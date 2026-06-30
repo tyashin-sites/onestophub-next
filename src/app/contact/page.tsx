@@ -1,13 +1,14 @@
-import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ContactForm from './ContactForm';
 import { Mail, Phone, MapPin, Instagram, Clock } from 'lucide-react';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'Contact Us',
   description: 'Get in touch with OneStopHub for custom orders, bulk hampers, and personalised gifts.',
-};
+  path: '/contact',
+});
 
 const CONTACT_INFO = [
   { Icon: Mail, label: 'Email', value: 'onestophubshop@gmail.com', href: 'mailto:onestophubshop@gmail.com' },

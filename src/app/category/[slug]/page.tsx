@@ -4,11 +4,13 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductsListing from '@/app/products/ProductsListing';
 import { api, ApiError } from '@/lib/api';
+import { pageMetadata } from '@/lib/seo';
 import type { ApiCategory } from '@/lib/types';
 
 const PAGE_SIZE = 60;
 
-/** Per-category SEO. Indexable, full title + description from the admin-set values. */
+/** Per-category SEO. Indexable, full title + description from the admin-set values.
+ *  ItemList + BreadcrumbList JSON-LD is injected by the Tyashin platform edge. */
 export async function generateMetadata({
   params,
 }: {
@@ -18,15 +20,12 @@ export async function generateMetadata({
   try {
     const res = await api.getCategory(slug);
     const c = res.data;
-    return {
+    return pageMetadata({
       title: c.name,
       description: c.description || `Browse ${c.name} at OneStopHub. ${c.productCount} products.`,
-      openGraph: {
-        title: `${c.name} · OneStopHub`,
-        description: c.description || undefined,
-        type: 'website',
-      },
-    };
+      path: `/category/${slug}`,
+      image: c.imageUrl || undefined,
+    });
   } catch {
     return { title: 'Category' };
   }

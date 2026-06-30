@@ -21,6 +21,7 @@ const body = Nunito_Sans({
 });
 import LegalFooterBar from '@/components/LegalFooterBar';
 import { api } from '@/lib/api';
+import { SITE, siteUrl } from '@/lib/seo';
 import type { StoreInfo, ApiCategory } from '@/lib/types';
 
 /**
@@ -37,9 +38,13 @@ import type { StoreInfo, ApiCategory } from '@/lib/types';
 const ROBOTS_NOINDEX = process.env.ROBOTS_NOINDEX === 'true';
 
 export const metadata: Metadata = {
+  // metadataBase makes every relative OG/canonical URL (incl. per-page
+  // pageMetadata output) resolve to an absolute https://www.<domain> URL.
+  metadataBase: new URL(siteUrl('/')),
   title: { default: 'OneStopHub — Personalised Gifts & Lifestyle Products', template: '%s · OneStopHub' },
   description:
     'OneStopHub — handpicked gifts, accessories, stationery, T-shirts, and personalised hampers for every occasion. Fast delivery across India.',
+  alternates: { canonical: siteUrl('/') },
   robots: ROBOTS_NOINDEX
     ? { index: false, follow: false, googleBot: { index: false, follow: false } }
     : undefined,
@@ -47,7 +52,16 @@ export const metadata: Metadata = {
     title: 'OneStopHub — Personalised Gifts & Lifestyle Products',
     description: 'Handpicked gifts, accessories, stationery & personalised hampers.',
     type: 'website',
-    locale: 'en_IN',
+    url: siteUrl('/'),
+    siteName: SITE.name,
+    locale: SITE.locale,
+    images: [{ url: SITE.defaultOgImage }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'OneStopHub — Personalised Gifts & Lifestyle Products',
+    description: 'Handpicked gifts, accessories, stationery & personalised hampers.',
+    images: [SITE.defaultOgImage],
   },
 };
 

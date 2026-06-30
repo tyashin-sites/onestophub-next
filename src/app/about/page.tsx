@@ -1,12 +1,13 @@
-import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
   title: 'About Us',
   description:
     'The story behind OneStopHub — founded by Naiya Gandhi Kad, curating thoughtful gifts and personalised hampers for families.',
-};
+  path: '/about',
+});
 
 const REASONS = [
   'Carefully curated products for kids of all ages',

@@ -5,6 +5,7 @@ import { ChevronLeft } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { api, ApiError } from '@/lib/api';
+import { pageMetadata } from '@/lib/seo';
 import type { BlogPost } from '@/lib/types';
 
 const SITE_ORIGIN = 'https://www.1stophub.shop';
@@ -40,16 +41,16 @@ export async function generateMetadata({
       p.excerpt ||
       (p.content ? p.content.replace(/<[^>]+>/g, ' ').slice(0, 160) : title);
     const img = p.seo?.ogImage || p.featuredImage;
+    // Base OG/Twitter/canonical via the shared helper, then layer the
+    // article-specific OG fields (BlogPosting JSON-LD comes from the edge).
+    const base = pageMetadata({ title, description, path: `/blog/${slug}`, image: img, type: 'article' });
     return {
-      title,
-      description,
+      ...base,
       openGraph: {
-        title,
-        description,
+        ...base.openGraph,
         type: 'article',
         publishedTime: p.publishedAt,
         authors: p.authorName ? [p.authorName] : undefined,
-        images: img ? [{ url: img, alt: p.title }] : undefined,
         tags: p.tags,
       },
     };

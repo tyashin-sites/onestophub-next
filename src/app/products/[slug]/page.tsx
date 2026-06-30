@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductDetailClient from './ProductDetailClient';
 import { api, ApiError } from '@/lib/api';
+import { pageMetadata } from '@/lib/seo';
 
 // Pre-render every product at build → product pages open instantly from cache
 // instead of an on-demand SSR round-trip. ISR keeps prices/stock fresh;
@@ -24,9 +25,10 @@ export async function generateStaticParams() {
 
 /* ------------------------------------------------------------------ */
 /*  Metadata + JSON-LD                                                 */
-/*  This is the single most SEO-critical surface on the site. We emit  */
-/*  full <title>/<meta>/OG + schema.org Product+Offer JSON-LD so       */
-/*  Google rich results + LLM crawlers can quote prices and stock.     */
+/*  This is the single most SEO-critical surface on the site. pageMetadata */
+/*  emits the full <title>/<meta>/OG + Twitter + canonical; schema.org   */
+/*  Product+Offer JSON-LD is injected by the Tyashin platform edge so    */
+/*  Google rich results + LLM crawlers can quote prices and stock.       */
 /* ------------------------------------------------------------------ */
 
 export async function generateMetadata({
@@ -44,16 +46,7 @@ export async function generateMetadata({
       p.shortDescription ||
       (p.description ? p.description.slice(0, 160) : `${p.name} — available at OneStopHub.`);
     const img = p.seo?.ogImage || p.images.find((i) => i.isPrimary)?.url || p.images[0]?.url;
-    return {
-      title,
-      description,
-      openGraph: {
-        title,
-        description,
-        type: 'website',
-        images: img ? [{ url: img, alt: p.name }] : undefined,
-      },
-    };
+    return pageMetadata({ title, description, path: `/products/${slug}`, image: img });
   } catch {
     return { title: 'Product' };
   }

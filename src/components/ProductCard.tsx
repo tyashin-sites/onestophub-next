@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Minus, Plus } from 'lucide-react';
 import { useCart, useStore, toast, toastError } from './Providers';
 import { formatPrice } from '@/lib/format';
+import { optimizedSrc, imgSrcSet, PRODUCT_CARD_SIZES } from '@/lib/img';
 import type { ApiProduct } from '@/lib/types';
 
 /**
@@ -86,7 +87,9 @@ export default function ProductCard({ product }: { product: ApiProduct }) {
         {displayImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={displayImage.url}
+            src={optimizedSrc(displayImage.url, 400)}
+            srcSet={imgSrcSet(displayImage.url) || undefined}
+            sizes={PRODUCT_CARD_SIZES}
             alt={displayImage.alt || product.name}
             className={`h-full w-full object-cover transition-all duration-500 ${
               isHovering ? 'scale-110' : 'scale-100'

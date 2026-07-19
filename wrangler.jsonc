@@ -32,9 +32,9 @@
     // Brand kit CSS is served by the platform (Tyashin-owned, locked). Loading
     // it via <link> in layout.tsx means colour changes propagate without a redeploy.
     "BRAND_KIT_CSS_URL": "https://website-api.tyashin.com/brand-kit.css",
-    // Robots gate — true on preview hostnames (`next.1stophub.shop`) until cutover.
-    // Flip to "false" via `wrangler secret put` when the canary moves to the prod host.
-    "ROBOTS_NOINDEX": "true"
+    // Robots gate — was "true" during the pre-cutover canary window. The site
+    // now serves the production host, so crawlers are allowed.
+    "ROBOTS_NOINDEX": "false"
   }
   // Secrets (set via the deploy.yml secrets-fetch step):
   //   TYASHIN_API_KEY              — project's public X-API-Key (ak_AgJSxiU...)

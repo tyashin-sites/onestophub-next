@@ -52,6 +52,17 @@ export interface ApiProduct {
   updatedAt: string;
 }
 
+/** Lightweight item shape of GET /products/:slug/related — NOT an ApiProduct. */
+export interface RelatedProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price?: number; // smallest currency unit
+  compareAtPrice?: number;
+  thumbnailUrl?: string;
+  inStock?: boolean;
+}
+
 export interface ProductReview {
   _id: string;
   customerName: string;

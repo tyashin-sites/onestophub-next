@@ -20,6 +20,7 @@ import type {
   ApiProduct,
   ApiCategory,
   ProductReviewsPayload,
+  RelatedProduct,
   BlogPost,
   BlogCategory,
   Cart,
@@ -153,10 +154,11 @@ export const api = {
     }),
 
   // NOTE: unlike /products, this endpoint wraps the list — data is
-  // { products: [...] }, NOT a bare array. Shipping `ApiProduct[]` here took
-  // every PDP down with `.slice is not a function` (2026-08-03).
+  // { products: [...] } of LIGHTWEIGHT RelatedProduct items (id/thumbnailUrl,
+  // no images array). Typing this as ApiProduct[] took every PDP down on
+  // 2026-08-03 (.slice, then .images.find, on the wrong shape).
   getRelatedProducts: (slug: string, limit = 8) =>
-    apiFetch<{ products: ApiProduct[] }>(
+    apiFetch<{ products: RelatedProduct[] }>(
       `/products/${encodeURIComponent(slug)}/related?limit=${limit}`,
       { noSession: true, revalidate: 300 },
     ),

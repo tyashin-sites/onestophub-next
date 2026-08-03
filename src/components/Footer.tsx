@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Instagram, Mail, Phone, MapPin } from 'lucide-react';
 import { useCategories } from './Providers';
-import { getProductsCategoryHref } from '@/lib/category-routing';
+import { getCategoryLandingHref } from '@/lib/category-routing';
 
 /**
  * Footer is a client component so it can read the live category list from the
@@ -40,6 +40,10 @@ export default function Footer() {
                 { label: 'Blog', href: '/blog' },
                 { label: 'About Us', href: '/about' },
                 { label: 'Contact', href: '/contact' },
+                { label: 'FAQ', href: '/faq' },
+                { label: 'Privacy Policy', href: '/privacy-policy' },
+                { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+                { label: 'Return Policy', href: '/return-policy' },
               ].map((link) => (
                 <Link
                   key={link.href}
@@ -55,10 +59,13 @@ export default function Footer() {
           <div>
             <h4 className="mb-4 text-lg font-semibold">Categories</h4>
             <nav className="flex flex-col gap-2">
-              {categories.slice(0, 5).map((cat) => (
+              {/* ALL categories, on their canonical /category/<slug> landing
+                  pages (not the ?category= query twin) — the footer is the
+                  site-wide inbound-link safety net for category SEO. */}
+              {categories.map((cat) => (
                 <Link
                   key={cat._id}
-                  href={getProductsCategoryHref(cat.slug)}
+                  href={getCategoryLandingHref(cat.slug)}
                   className="text-sm opacity-80 transition-opacity hover:opacity-100"
                 >
                   {cat.name}

@@ -45,8 +45,29 @@ export interface ApiProduct {
   seo?: { metaTitle?: string; metaDescription?: string; ogImage?: string };
   viewCount: number;
   soldCount: number;
+  /** Denormalized from published verified-buyer reviews (0/absent = none). */
+  averageRating?: number;
+  reviewCount?: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProductReview {
+  _id: string;
+  customerName: string;
+  rating: number; // 1..5
+  title?: string;
+  body: string;
+  reply?: { body: string; repliedAt: string };
+  createdAt: string;
+}
+
+export interface ProductReviewsPayload {
+  /** false ⇒ the store hasn't enabled review display — render nothing. */
+  enabled?: boolean;
+  reviews: ProductReview[];
+  pagination: { page: number; limit: number; total: number; totalPages: number };
+  stats: { averageRating: number; totalReviews: number; distribution: Record<number, number> };
 }
 
 export interface ApiCategory {

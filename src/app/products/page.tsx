@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import PaginationNav from '@/components/PaginationNav';
 import ProductsListing from './ProductsListing';
 import { api } from '@/lib/api';
 import { pageMetadata } from '@/lib/seo';
@@ -35,16 +36,17 @@ export default async function ProductsPage({
   const search = sp.search || '';
   const categorySlug = sp.category || '';
   const categoryId = sp.categoryId || '';
+  const page = Math.max(1, parseInt(sp.page || '1', 10) || 1);
 
-  // Fetch the first page server-side so initial paint shows products without
-  // a client round-trip. Subsequent pages load via "Load more" on the client.
+  // Fetch the requested page server-side (?page=N is honored — crawlable
+  // pagination depends on it). "Load more" appends further pages client-side.
   let initialProducts: ApiProduct[] = [];
-  let initialMeta = { total: 0, page: 1, limit: PAGE_SIZE, totalPages: 1 };
+  let initialMeta = { total: 0, page, limit: PAGE_SIZE, totalPages: 1 };
   let categories: ApiCategory[] = [];
   try {
     const params: Record<string, string | number> = {
       limit: PAGE_SIZE,
-      page: 1,
+      page,
       sortBy,
       sortOrder,
     };
@@ -80,6 +82,17 @@ export default async function ProductsPage({
               initialCategorySlug={categorySlug}
               initialSortBy={sortBy}
               initialSortOrder={sortOrder}
+            />
+            <PaginationNav
+              currentPage={initialMeta.page}
+              totalPages={initialMeta.totalPages}
+              basePath="/products"
+              params={{
+                ...(search ? { search } : {}),
+                ...(categorySlug ? { category: categorySlug } : {}),
+                ...(sp.sortBy ? { sortBy } : {}),
+                ...(sp.sortOrder ? { sortOrder } : {}),
+              }}
             />
           </div>
         </section>

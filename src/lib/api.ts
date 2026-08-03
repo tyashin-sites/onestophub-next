@@ -19,6 +19,7 @@ import type {
   ApiEnvelope,
   ApiProduct,
   ApiCategory,
+  ProductReviewsPayload,
   BlogPost,
   BlogCategory,
   Cart,
@@ -150,6 +151,18 @@ export const api = {
       noSession: true,
       revalidate: 60,
     }),
+
+  getRelatedProducts: (slug: string, limit = 8) =>
+    apiFetch<ApiProduct[]>(
+      `/products/${encodeURIComponent(slug)}/related?limit=${limit}`,
+      { noSession: true, revalidate: 300 },
+    ),
+
+  getProductReviews: (productId: string, page = 1, limit = 10) =>
+    apiFetch<ProductReviewsPayload>(
+      `/products/${encodeURIComponent(productId)}/reviews?page=${page}&limit=${limit}`,
+      { noSession: true, revalidate: 60 },
+    ),
 
   getCategories: () =>
     apiFetch<ApiCategory[]>('/categories', { noSession: true, revalidate: 300 }),

@@ -188,6 +188,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               ))}
             </div>
           )}
+
+          <MoreFromTheBlog currentSlug={post.slug} />
         </article>
       </main>
       <Footer />
@@ -196,5 +198,42 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
     </div>
+  );
+}
+
+/**
+ * Related-posts strip — every post links its siblings so no post is a
+ * one-inlink orphan, and readers have somewhere to go next.
+ */
+async function MoreFromTheBlog({ currentSlug }: { currentSlug: string }) {
+  let posts;
+  try {
+    const res = await api.getBlogPosts({ limit: 4, page: 1 });
+    posts = (res.data ?? []).filter((p) => p.slug !== currentSlug).slice(0, 3);
+  } catch {
+    return null;
+  }
+  if (posts.length === 0) return null;
+
+  return (
+    <section className="mt-12 border-t border-border pt-8">
+      <h2 className="font-display text-xl font-semibold text-foreground">More from the blog</h2>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        {posts.map((p) => (
+          <a
+            key={p.slug}
+            href={`/blog/${encodeURIComponent(p.slug)}`}
+            className="group rounded-lg border border-border p-4 transition-colors hover:border-primary"
+          >
+            <h3 className="line-clamp-2 text-sm font-semibold text-foreground group-hover:text-primary">
+              {p.title}
+            </h3>
+            {p.excerpt && (
+              <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{p.excerpt}</p>
+            )}
+          </a>
+        ))}
+      </div>
+    </section>
   );
 }

@@ -1,21 +1,19 @@
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SectionHeading from '@/components/SectionHeading';
 import { api } from '@/lib/api';
+import { pageMetadata } from '@/lib/seo';
 import type { BlogPost, ApiMeta } from '@/lib/types';
 
-export const metadata: Metadata = {
+// pageMetadata gives the index a canonical (/blog) so the ?tag=/?page=
+// permutations consolidate onto one URL instead of splitting signals.
+export const metadata = pageMetadata({
   title: 'Blog',
   description:
     'Gift-guides, styling tips, and stories from OneStopHub — your destination for personalised gifts and lifestyle products.',
-  openGraph: {
-    title: 'Blog · OneStopHub',
-    description: 'Gift-guides, styling tips, and stories from OneStopHub.',
-    type: 'website',
-  },
-};
+  path: '/blog',
+});
 
 const PAGE_SIZE = 12;
 

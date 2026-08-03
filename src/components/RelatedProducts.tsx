@@ -1,6 +1,7 @@
 import ProductCard from '@/components/ProductCard';
 import SectionHeading from '@/components/SectionHeading';
 import { api } from '@/lib/api';
+import type { ApiProduct } from '@/lib/types';
 
 /**
  * Server-rendered "You may also like" grid on the product detail page.
@@ -11,14 +12,20 @@ import { api } from '@/lib/api';
  * if the API has no related products.
  */
 export default async function RelatedProducts({ slug }: { slug: string }) {
-  let related;
+  let related: ApiProduct[];
   try {
     const res = await api.getRelatedProducts(slug, 8);
-    related = res.data ?? [];
+    // Defensive on shape: data is { products: [...] } today; tolerate a bare
+    // array too so an API change degrades to "no grid", never a 500.
+    const raw: unknown = res.data;
+    const list = Array.isArray(raw)
+      ? raw
+      : (raw as { products?: ApiProduct[] } | null)?.products;
+    if (!Array.isArray(list) || list.length === 0) return null;
+    related = list as ApiProduct[];
   } catch {
     return null;
   }
-  if (related.length === 0) return null;
 
   return (
     <section className="mt-16">

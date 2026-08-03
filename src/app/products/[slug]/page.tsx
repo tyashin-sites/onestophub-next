@@ -92,7 +92,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   }
 
   const reviewsEnabled = reviewsPayload?.enabled === true;
-  const reviewStats = reviewsEnabled ? reviewsPayload?.stats : undefined;
+  const reviewStats =
+    reviewsEnabled && typeof reviewsPayload?.stats?.averageRating === 'number'
+      ? reviewsPayload.stats
+      : undefined;
+  const reviewList = Array.isArray(reviewsPayload?.reviews) ? reviewsPayload.reviews : [];
 
   // schema.org Product / Offer — the GEO/AEO surface. AggregateRating and
   // Review nodes are DATA-DRIVEN: emitted only when review display is on and
@@ -123,7 +127,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             ratingValue: Number(reviewStats.averageRating.toFixed(1)),
             reviewCount: reviewStats.totalReviews,
           },
-          review: (reviewsPayload?.reviews ?? []).slice(0, 3).map((r) => ({
+          review: reviewList.slice(0, 3).map((r) => ({
             '@type': 'Review',
             author: { '@type': 'Person', name: r.customerName },
             reviewRating: {

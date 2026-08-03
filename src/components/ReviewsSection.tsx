@@ -36,8 +36,11 @@ export default async function ReviewsSection({ productId }: { productId: string 
   }
   if (payload?.enabled !== true) return null;
 
-  const { reviews, stats } = payload;
-  const total = stats?.totalReviews ?? 0;
+  // Shape-defensive: a payload surprise degrades to "no section", never a 500.
+  const reviews = Array.isArray(payload.reviews) ? payload.reviews : [];
+  const stats = payload.stats;
+  const total = typeof stats?.totalReviews === 'number' ? stats.totalReviews : 0;
+  if (total > 0 && (!stats || typeof stats.averageRating !== 'number')) return null;
 
   return (
     <section id="reviews" className="mt-16">

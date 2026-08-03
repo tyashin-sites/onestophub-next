@@ -152,8 +152,11 @@ export const api = {
       revalidate: 60,
     }),
 
+  // NOTE: unlike /products, this endpoint wraps the list — data is
+  // { products: [...] }, NOT a bare array. Shipping `ApiProduct[]` here took
+  // every PDP down with `.slice is not a function` (2026-08-03).
   getRelatedProducts: (slug: string, limit = 8) =>
-    apiFetch<ApiProduct[]>(
+    apiFetch<{ products: ApiProduct[] }>(
       `/products/${encodeURIComponent(slug)}/related?limit=${limit}`,
       { noSession: true, revalidate: 300 },
     ),

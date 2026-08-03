@@ -103,6 +103,23 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
+        {/* Platform attribution (Tyashin addendum §3f). Lives here, NOT in
+            LegalFooterBar — on dispatched hosts the runtime re-injects that bar
+            and would drop anything we add to it. */}
+        <div className="mt-10 border-t border-primary-foreground/15 pt-6 text-center">
+          <p className="text-xs opacity-70">
+            Powered by{' '}
+            <a
+              href="https://tyashin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-2 hover:underline"
+            >
+              Tyashin
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );

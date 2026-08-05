@@ -1,5 +1,5 @@
 import { Star } from 'lucide-react';
-import WriteReviewCTA from '@/components/WriteReviewCTA';
+import InlineReviewForm from '@/components/InlineReviewForm';
 import { api } from '@/lib/api';
 import type { ProductReviewsPayload } from '@/lib/types';
 
@@ -51,7 +51,7 @@ export default async function ReviewsSection({ productId }: { productId: string 
           <p className="text-sm text-muted-foreground">
             No reviews yet — be the first to share your experience.
           </p>
-          <WriteReviewCTA />
+          <InlineReviewForm productId={productId} />
         </div>
       ) : (
         <>
@@ -86,7 +86,7 @@ export default async function ReviewsSection({ productId }: { productId: string 
                 })}
               </div>
               <div className="mt-6">
-                <WriteReviewCTA />
+                <InlineReviewForm productId={productId} />
               </div>
             </div>
 

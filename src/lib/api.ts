@@ -21,6 +21,7 @@ import type {
   ApiCategory,
   ProductReviewsPayload,
   RelatedProduct,
+  EligibleReviewItem,
   BlogPost,
   BlogCategory,
   Cart,
@@ -167,6 +168,22 @@ export const api = {
     apiFetch<ProductReviewsPayload>(
       `/products/${encodeURIComponent(productId)}/reviews?page=${page}&limit=${limit}`,
       { noSession: true, revalidate: 60 },
+    ),
+
+  /* -- identified inline reviews (browser-only: needs the session id) ------ */
+
+  getEligibleReviews: () =>
+    apiFetch<{ enabled: boolean; items: EligibleReviewItem[] }>('/reviews/eligible', {
+      noStore: true,
+    }),
+
+  submitReview: (
+    productId: string,
+    data: { orderId: string; rating: number; title?: string; body: string },
+  ) =>
+    apiFetch<{ id: string; status: string; message: string }>(
+      `/products/${encodeURIComponent(productId)}/reviews`,
+      { method: 'POST', body: JSON.stringify(data), noStore: true },
     ),
 
   getCategories: () =>

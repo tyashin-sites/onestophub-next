@@ -73,6 +73,16 @@ export interface ProductReview {
   createdAt: string;
 }
 
+/** One reviewable purchase from GET /reviews/eligible (session-identified). */
+export interface EligibleReviewItem {
+  productId: string;
+  orderId: string;
+  orderNumber: string;
+  productName: string;
+  imageUrl?: string;
+  purchasedAt?: string;
+}
+
 export interface ProductReviewsPayload {
   /** false ⇒ the store hasn't enabled review display — render nothing. */
   enabled?: boolean;

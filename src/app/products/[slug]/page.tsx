@@ -3,13 +3,81 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs, { type Crumb } from '@/components/Breadcrumbs';
+import DeliveryReturns from '@/components/DeliveryReturns';
 import RelatedProducts from '@/components/RelatedProducts';
 import ReviewsSection from '@/components/ReviewsSection';
 import ProductDetailClient from './ProductDetailClient';
 import { api, ApiError } from '@/lib/api';
 import { getCategoryLandingHref } from '@/lib/category-routing';
 import { pageMetadata } from '@/lib/seo';
-import type { ProductReviewsPayload } from '@/lib/types';
+import type { ProductReviewsPayload, StoreInfo } from '@/lib/types';
+
+/**
+ * GSC merchant-listing fields for the baked Offer, built from the SAME
+ * structured store facts the "Delivery & Returns" block displays. Absent
+ * facts → absent fields (never invent shipping or policy terms).
+ */
+function merchantListingFields(info?: StoreInfo): Record<string, unknown> {
+  if (!info) return {};
+  const out: Record<string, unknown> = {};
+
+  const zones = (Array.isArray(info.shippingZones) ? info.shippingZones : [])
+    .filter((z) => z && Array.isArray(z.countries) && z.countries.length > 0)
+    .slice(0, 3);
+  if (zones.length > 0) {
+    out.shippingDetails = zones.map((z) => {
+      const nums = (z.estimatedDays || '').match(/\d+/g);
+      const min = nums ? parseInt(nums[0], 10) : NaN;
+      const max = nums && nums.length > 1 ? parseInt(nums[1], 10) : min;
+      return {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: ((typeof z.rate === 'number' && z.rate >= 0 ? z.rate : 0) / 100).toFixed(2),
+          currency: info.currency || 'INR',
+        },
+        shippingDestination: (z.countries ?? [])
+          .slice(0, 10)
+          .map((cc) => ({ '@type': 'DefinedRegion', addressCountry: cc })),
+        ...(Number.isFinite(min) && Number.isFinite(max) && max >= min && max <= 90
+          ? {
+              deliveryTime: {
+                '@type': 'ShippingDeliveryTime',
+                transitTime: {
+                  '@type': 'QuantitativeValue',
+                  minValue: min,
+                  maxValue: max,
+                  unitCode: 'DAY',
+                },
+              },
+            }
+          : {}),
+      };
+    });
+  }
+
+  const rp = info.returnPolicy;
+  if (rp?.category === 'not-permitted') {
+    out.hasMerchantReturnPolicy = {
+      '@type': 'MerchantReturnPolicy',
+      applicableCountry: rp.applicableCountry || 'IN',
+      returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+    };
+  } else if (rp?.category === 'finite' && rp.merchantReturnDays) {
+    out.hasMerchantReturnPolicy = {
+      '@type': 'MerchantReturnPolicy',
+      applicableCountry: rp.applicableCountry || 'IN',
+      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      merchantReturnDays: rp.merchantReturnDays,
+      returnMethod: 'https://schema.org/ReturnByMail',
+      returnFees:
+        rp.returnFees === 'free'
+          ? 'https://schema.org/FreeReturn'
+          : 'https://schema.org/ReturnShippingFees',
+    };
+  }
+  return out;
+}
 
 // Pre-render every product at build → product pages open instantly from cache
 // instead of an on-demand SSR round-trip. ISR keeps prices/stock fresh;
@@ -76,10 +144,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   let categoryName: string | undefined;
   let categorySlug: string | undefined;
   let reviewsPayload: ProductReviewsPayload | undefined;
+  let storeInfo: StoreInfo | undefined;
   try {
-    const [cRes, rRes] = await Promise.allSettled([
+    const [cRes, rRes, sRes] = await Promise.allSettled([
       api.getCategories(),
       api.getProductReviews(product._id, 1, 10),
+      api.getStoreInfo(),
     ]);
     if (cRes.status === 'fulfilled' && product.categoryId) {
       const cat = (cRes.value.data ?? []).find((c) => c._id === product.categoryId);
@@ -87,6 +157,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       categorySlug = cat?.slug;
     }
     if (rRes.status === 'fulfilled') reviewsPayload = rRes.value.data;
+    if (sRes.status === 'fulfilled') storeInfo = sRes.value.data;
   } catch {
     /* non-fatal — page renders without breadcrumb category / review schema */
   }
@@ -119,6 +190,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         ? 'https://schema.org/InStock'
         : 'https://schema.org/OutOfStock',
       url: `https://www.1stophub.shop/products/${product.slug}`,
+      ...merchantListingFields(storeInfo),
     },
     ...(reviewStats && reviewStats.totalReviews > 0
       ? {
@@ -168,6 +240,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               primaryImageAlt={primaryImage?.alt || product.name}
             />
           </div>
+
+          {/* Shipping + returns facts (mirrors the Offer JSON-LD fields) */}
+          <DeliveryReturns />
 
           {/* Customer reviews — hidden until the store enables display */}
           <ReviewsSection productId={product._id} />

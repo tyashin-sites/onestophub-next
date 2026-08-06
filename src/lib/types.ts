@@ -171,7 +171,23 @@ export interface StoreInfo {
   razorpayKeyId?: string;
   stripePublishableKey?: string;
   shippingCountries?: string[];
-  shippingZones: unknown[];
+  shippingZones: StoreShippingZone[];
+  /** Structured return/replacement/refund facts; the document is /return-policy. */
+  returnPolicy?: {
+    category: 'not-permitted' | 'finite';
+    merchantReturnDays?: number;
+    returnFees?: 'free' | 'customer-paid';
+    defectiveItemWindowDays?: number;
+    applicableCountry?: string;
+  };
+}
+
+export interface StoreShippingZone {
+  name?: string;
+  countries?: string[];
+  rate?: number; // smallest currency unit
+  freeAbove?: number; // smallest currency unit
+  estimatedDays?: string; // free-form, e.g. "3-5"
 }
 
 export interface CheckoutItemRequest {

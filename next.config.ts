@@ -24,7 +24,6 @@ const nextConfig = {
   },
   // Speed up CI deploys; the platform's typecheck/lint runs in `npm run lp` against the backend, not here.
   typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
   async redirects() {
     return [
       // Legacy Lovable route — Lovable repo had `/shop` aliased to `/products`.

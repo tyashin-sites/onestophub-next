@@ -5,7 +5,7 @@
   // `projects.workerDeployment.scriptName` at this script.
   "name": "site-onestophub-next",
   "main": ".open-next/worker.js",
-  "logpush": true,
+  "tail_consumers": [{ "service": "aapastech-security-log-tail" }],
   "compatibility_date": "2025-04-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
